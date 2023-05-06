@@ -14,8 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf.urls.static import static
+
+from mainapp.views import *
+from sharpeyes import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #список URL адресов mainapp
+    path('', include('mainapp.urls')), 
 ]
+
+#в режиме отладки добавление ещё одного маршрута для медиа файлов
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+#ссылка на функцию обработчик страницы 404
+#handler404 = PageNotFound
