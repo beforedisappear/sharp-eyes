@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mainapp.apps.MainappConfig',
     'social_django',
+    'calendar',
     'uuslug',
 ]
 
@@ -45,7 +46,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'sharpeyes.context_processor.get_context_data', #context_processor.py method
+                #'sharpeyes.context_processor.get_context_data', #context_processor.py method
                 
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
@@ -93,13 +94,7 @@ SOCIAL_AUTH_DISCONNECT_PIPELINE = (
 # перенаправление при успешной авторизации
 LOGIN_REDIRECT_URL = '/'
 
-
-
 WSGI_APPLICATION = 'sharpeyes.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     'default': {

@@ -18,3 +18,27 @@ class UserAdmin(BaseUserAdmin):
    readonly_fields = ["date_joined", "is_superuser"]
 
 admin.site.register(MyUser, UserAdmin)
+
+
+class TaskAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Task, TaskAdmin)
+
+
+class InstructionAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Instruction, InstructionAdmin)
+
+
+class SurveyAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Survey, SurveyAdmin)
+
+
+class DayProgressAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(DayProgress, DayProgressAdmin)

@@ -1,0 +1,15 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% comment %} 
+{% load mainapp_tags %}
+{% get_day userqueryset=dates date="2023-05-08" as day %} 
+{% endcomment %}
+
+
+{{calendar|safe}}
+
+
+{% endblock %}

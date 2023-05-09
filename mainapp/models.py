@@ -1,12 +1,12 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import FileExtensionValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from .utils import user_directory_path, correct_email
 
 from uuslug import uuslug, slugify
+import datetime
 
 
 class CustomAccountManager(BaseUserManager):
@@ -36,11 +36,12 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
    is_staff = models.BooleanField(_('Модератор'), default=False)
    is_active = models.BooleanField(_('Активирован'), default=False)
    description = models.CharField(_('Описание'),max_length=150, blank=True)
-   userpic = models.ImageField(_('Аватар'), upload_to=user_directory_path, blank=True, default='baseuserpic.jpg')
+   userpic = models.ImageField(_('Аватар'), upload_to=user_directory_path, 
+                               blank=True, default='baseuserpic.jpg') #mediafile
    date_joined = models.DateTimeField(_("Дата регистрации"), blank=True, null=True, auto_now_add=True)
    birthdate = models.DateTimeField(_("Дата рождения"), blank=True, null=True)
    userslug = models.SlugField(_('userslug'), max_length=150, unique=True, db_index=True)
-   SEX = [('Male', 'M'), ('Female', 'F'),]
+   SEX = [('M', 'Male'), ('F', 'Female'),]
    sex = models.CharField(_("Пол"), max_length=1, choices=SEX)
    notification = models.BooleanField(_("Уведомления"), default=False)
    
@@ -70,7 +71,11 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
          MyUser.objects.filter(id=self.id).update(userslug=self.userslug)
          
    def get_absolute_url(self):
-        return reverse('user-page', args=[self.userslug])
+      return reverse('user-page', args=[self.userslug])
+     
+   class Meta:
+      verbose_name = 'Пользователь'
+      verbose_name_plural = 'Пользователи'
       
       
 class Task(models.Model):
@@ -83,29 +88,55 @@ class Task(models.Model):
       ]
    )
    status = models.BooleanField(_("Выполнено"), default=False)
+   time_create = models.DateTimeField(_("Дата создания"), auto_now_add=True)
+   is_active = models.BooleanField(_("Доступно"), default=True)
+   
+   class Meta:
+      verbose_name = 'Задание'
+      verbose_name_plural = 'Задания'
+      ordering = ['time_create']
 
 
 class Instruction(models.Model):
    title = models.CharField(_("Заголовок"), max_length=35)
-   file = models.FileField(_("Файл"),upload_to='files/%Y/%m/%d', blank=True)
+   file = models.FileField(_("Файл"),upload_to='files/%Y/%m/%d', blank=True) #mediafile
    status = models.BooleanField(_("Просмотрено"), default=False)
+   time_create = models.DateTimeField(_("Дата создания"), auto_now_add=True)
+   is_active = models.BooleanField(_("Доступно"), default=True)
+   
+   class Meta:
+      verbose_name = 'Инструкцию'
+      verbose_name_plural = 'Инструкции'
+      ordering = ['time_create']
    
    
 class Survey(models.Model):
    title = models.CharField(_("Заголовок"), max_length=35)
    link = models.URLField(_("Ссылка"), max_length=250)
    status = models.BooleanField(_("Просмотрено"), default=False)
+   time_create = models.DateTimeField(_("Дата создания"), auto_now_add=True)
+   is_active = models.BooleanField(_("Доступно"), default=True)
+   
+   class Meta:
+      verbose_name = 'Опрос'
+      verbose_name_plural = 'Опросы'
+      ordering = ['time_create']
    
    
 class DayProgress(models.Model):
-   user = models.ForeignKey(_("Пользователь"), MyUser, on_delete=models.CASCADE)
+   #many dayprogess to one user
+   user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
    sharpness_vision = models.IntegerField(_("Острота зрение"),)
    colorness_vision = models.IntegerField(_("Цветовое зрение"),)
    peripheral_vision = models.IntegerField(_("Переферическое зрение"),)
    binocular_vision  = models.IntegerField(_("Бинокулярное зрение"),)
-   additional_info = models.IntegerField(_("Дополнительная информация"),)
-   current_date = models.DateField(_("Дата действия"),)
+   additional_info = models.CharField(_("Дополнительная информация"), max_length=150)
+   current_date = models.DateField(_("Дата действия"), auto_now_add=True) #default=datetime.date.today().strftime('%d.%m.%Y')
    
-class Dictionary(models.Model):
-   pass
+   def __str__(self):
+      return f"{self.user.username} | {self.current_date.strftime('%d.%m.%Y')}"
    
+   class Meta:
+      verbose_name = 'Прогресс'
+      verbose_name_plural = 'Прогресс пользователей'
+      
