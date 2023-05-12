@@ -3,13 +3,20 @@
 
 {% block content %}
 
-{% comment %} 
-{% load mainapp_tags %}
-{% get_day userqueryset=dates date="2023-05-08" as day %} 
-{% endcomment %}
+
+<div class="clearfix">
+	{% if prev_month %}
+		<a class="btn btn-info left" href="{% url 'diary' %}?{{ prev_month }}"> Previous Month </a>
+	{% endif %}
+
+	{% if next_month %}
+		<a class="btn btn-info right" href="{% url 'diary' %}?{{ next_month }}"> Next Month </a>
+	{% endif %}
+</div>
 
 
 {{calendar|safe}}
+
 
 
 {% endblock %}

@@ -5,8 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from .utils import user_directory_path, correct_email
 
-from uuslug import uuslug, slugify
-import datetime
+from uuslug import slugify
 
 
 class CustomAccountManager(BaseUserManager):
@@ -91,6 +90,9 @@ class Task(models.Model):
    time_create = models.DateTimeField(_("Дата создания"), auto_now_add=True)
    is_active = models.BooleanField(_("Доступно"), default=True)
    
+   def __str__(self):
+      return self.title
+      
    class Meta:
       verbose_name = 'Задание'
       verbose_name_plural = 'Задания'
@@ -109,6 +111,8 @@ class Instruction(models.Model):
       verbose_name_plural = 'Инструкции'
       ordering = ['time_create']
    
+   def __str__(self):
+      return self.title
    
 class Survey(models.Model):
    title = models.CharField(_("Заголовок"), max_length=35)
@@ -122,16 +126,18 @@ class Survey(models.Model):
       verbose_name_plural = 'Опросы'
       ordering = ['time_create']
    
+   def __str__(self):
+      return self.title
    
 class DayProgress(models.Model):
    #many dayprogess to one user
    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-   sharpness_vision = models.IntegerField(_("Острота зрение"),)
-   colorness_vision = models.IntegerField(_("Цветовое зрение"),)
-   peripheral_vision = models.IntegerField(_("Переферическое зрение"),)
-   binocular_vision  = models.IntegerField(_("Бинокулярное зрение"),)
-   additional_info = models.CharField(_("Дополнительная информация"), max_length=150)
-   current_date = models.DateField(_("Дата действия"), auto_now_add=True) #default=datetime.date.today().strftime('%d.%m.%Y')
+   sharpness_vision = models.IntegerField(_("Острота зрение"),null=True, blank=True)
+   colorness_vision = models.IntegerField(_("Цветовое зрение"),null=True, blank=True)
+   peripheral_vision = models.IntegerField(_("Переферическое зрение"),null=True, blank=True)
+   binocular_vision  = models.IntegerField(_("Бинокулярное зрение"),null=True, blank=True)
+   additional_info = models.CharField(_("Дополнительная информация"), max_length=150, null=True, blank=True)
+   current_date = models.DateField(_("Дата действия"), auto_now_add=True)
    
    def __str__(self):
       return f"{self.user.username} | {self.current_date.strftime('%d.%m.%Y')}"

@@ -21,19 +21,19 @@ admin.site.register(MyUser, UserAdmin)
 
 
 class TaskAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('title', 'description', 'link', 'count', 'is_active', 'time_create')
 
 admin.site.register(Task, TaskAdmin)
 
 
 class InstructionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('title', 'file', 'is_active', 'time_create')
 
 admin.site.register(Instruction, InstructionAdmin)
 
 
 class SurveyAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('title', 'link', 'is_active', 'time_create')
 
 admin.site.register(Survey, SurveyAdmin)
 

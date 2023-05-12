@@ -1,16 +1,15 @@
 from datetime import datetime, timedelta
 from calendar import HTMLCalendar
-from .models import DayProgress
 
 ru_day_abbr = ["Пн","Вт","Ср","Чт","Пт","Сб", "Вс"]
-ru_month_name = ["Декабрь", "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь"] 
+ru_month_name = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"] 
 
 class Calendar(HTMLCalendar):
    
-	def __init__(self, year=None, month=None, user=None):
+	def __init__(self, year=None, month=None, queryset=None):
 		self.year = year
 		self.month = month
-		self.user = user
+		self.queryset = queryset
 		super(Calendar, self).__init__()
      
 	# formats a day as a td
@@ -20,7 +19,7 @@ class Calendar(HTMLCalendar):
 		else:
 			date = datetime.strptime(f"{self.year}{self.month}{day}", '%Y%m%d').date()
 			try:
-				data = DayProgress.objects.get(user = self.user, current_date=date)
+				data = self.queryset.get(current_date=date)
 			except:
 				data = ""
 			return f'<td class="%s">%s %s</td>' % (self.cssclasses[weekday], day, data)
@@ -35,7 +34,6 @@ class Calendar(HTMLCalendar):
 	# formats a month as a table
 	# filter events by year and month
 	def formatmonth(self, withyear=True):
-		#events = Event.objects.filter(start_time__year=self.year, start_time__month=self.month)
 		cal = f'<table border="0" cellpadding="0" cellspacing="0" class="calendar">\n' #creatring a table
 		cal += f'{self.formatmonthname(self.year, self.month, withyear=withyear)}\n' #<tr><th colspan="7" class="month">May 2023</th></tr>
 		cal += f'{self.formatweekheader()}\n'
@@ -44,15 +42,14 @@ class Calendar(HTMLCalendar):
 			cal += f'{self.formatweek(week)}\n'
 		return cal
 
-
-	#russificated method (instead of default day_abbr)
+	#russificated method (ru_day_abbr instead of default day_abbr)
 	def formatweekday(self, day):
 		return '<th class="%s">%s</th>' % (self.cssclasses_weekday_head[day], ru_day_abbr[day]) 
 
-	#russificated method (instead of default month_name)
+	#russificated method (ru_month_name instead of default month_name)
 	def formatmonthname(self, theyear, themonth, withyear=True):
 		if withyear:
-			s = '%s %s' % (ru_month_name[themonth], theyear)
+			s = '%s %s' % (ru_month_name[themonth-1], theyear)
 		else:
 			s = '%s' % ru_month_name[themonth]
 		return '<tr><th colspan="7" class="%s">%s</th></tr>' % (self.cssclass_month_head, s)
