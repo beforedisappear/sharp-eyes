@@ -14,7 +14,9 @@ from .views import *
 
 urlpatterns = [
    path('', HomePage.as_view(), name='home'),
-   path('profile/', ProfilePage.as_view(), name='profilepage'),
-   path('myprogress/<slug:user>', ProgressPage.as_view(), name='progress'),
-   path('diary/', MyDiary.as_view(), name='diary'),
+   path('profile/<slug:userslug>/', ProfilePage.as_view(), name='profilepage'),
+   path('myprogress/<slug:userslug>/', ProgressPage.as_view(), name='progresspage'),
+   path('diary/', MyDiary.as_view(), name='diarypage'),
+   path('account/active/<uidb64>/<token>/', EmailVerify.as_view(), name='userverify'),
+   path('account/reset/<uidb64>/<token>/', PasswordResetConfirm.as_view(), name='userpasswordreset'),
 ]

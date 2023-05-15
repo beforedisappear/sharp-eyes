@@ -1,0 +1,23 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+{{thisuser}}
+
+<br>------------------------------------------------</br>
+<form id="useredit" method="POST" class="" enctype="">
+   {% csrf_token %}
+   {{form.as_p}}
+   <button type="submit" id="">save</button>
+</form>
+
+<br></br>
+
+<form id="resetpassword" method="POST" class="input-group">
+   {% csrf_token %}
+   <button type="submit" id="">Изменить пароль</button>
+</form>
+
+
+{% endblock %}

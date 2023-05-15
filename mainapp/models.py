@@ -37,11 +37,11 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
    description = models.CharField(_('Описание'),max_length=150, blank=True)
    userpic = models.ImageField(_('Аватар'), upload_to=user_directory_path, 
                                blank=True, default='baseuserpic.jpg') #mediafile
-   date_joined = models.DateTimeField(_("Дата регистрации"), blank=True, null=True, auto_now_add=True)
-   birthdate = models.DateTimeField(_("Дата рождения"), blank=True, null=True)
+   date_joined = models.DateField(_("Дата регистрации"), blank=True, null=True, auto_now_add=True)
+   birthdate = models.DateField(_("Дата рождения"), blank=True, null=True)
    userslug = models.SlugField(_('userslug'), max_length=150, unique=True, db_index=True)
-   SEX = [('M', 'Male'), ('F', 'Female'),]
-   sex = models.CharField(_("Пол"), max_length=1, choices=SEX)
+   SEX = [('M', 'М'), ('F', 'Ж'),]
+   sex = models.CharField(_("Пол"), max_length=1, choices=SEX, blank=True)
    notification = models.BooleanField(_("Уведомления"), default=False)
    
    objects = CustomAccountManager()
@@ -70,7 +70,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
          MyUser.objects.filter(id=self.id).update(userslug=self.userslug)
          
    def get_absolute_url(self):
-      return reverse('user-page', args=[self.userslug])
+      return reverse('profilepage', kwargs={"userslug": self.userslug})
      
    class Meta:
       verbose_name = 'Пользователь'

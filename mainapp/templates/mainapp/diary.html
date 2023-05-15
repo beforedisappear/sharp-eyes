@@ -6,11 +6,11 @@
 
 <div class="clearfix">
 	{% if prev_month %}
-		<a class="btn btn-info left" href="{% url 'diary' %}?{{ prev_month }}"> Previous Month </a>
+		<a class="btn btn-info left" href="{% url 'diarypage' %}?{{ prev_month }}"> Previous Month </a>
 	{% endif %}
 
 	{% if next_month %}
-		<a class="btn btn-info right" href="{% url 'diary' %}?{{ next_month }}"> Next Month </a>
+		<a class="btn btn-info right" href="{% url 'diarypage' %}?{{ next_month }}"> Next Month </a>
 	{% endif %}
 </div>
 
