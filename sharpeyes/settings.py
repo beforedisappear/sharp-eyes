@@ -46,8 +46,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                #'sharpeyes.context_processor.get_context_data', #context_processor.py method
-                
+                'mainapp.context_processors.get_forms',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
             ],
@@ -151,3 +150,4 @@ EMAIL_HOST_PASSWORD = 'xiniufscoqjtdczf'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 #EMAIL_USE_SSL = True
+PASSWORD_RESET_TIMEOUT = 7200

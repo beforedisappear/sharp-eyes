@@ -1,0 +1,41 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+{% if request.user.is_authenticated %}
+
+<a href="{% url 'logout' %}"><p>Выйти</p></a>
+
+
+{% else %}
+
+<h1><b>регистрация</b></h1>
+<form id="" method="POST" class="" action="">
+   {% csrf_token %}
+   {{user_reg_form.as_p}}
+   <button type="submit" id="" name="" valie="">Sign up</button>
+</form>
+<br></br>
+
+<h1><b>авторизация</b></h1>
+<form id="" method="POST" class="" action="">
+   {% csrf_token %}
+   {{user_log_form.as_p}}
+   <button type="submit" id="" name="" valie="">Sign in</button>
+</form>
+
+
+<br></br>
+<h1><b>сбросить пароль</b></h1>
+<form id="" method="POST" class="" action="">
+   {% csrf_token %}
+   {{reset_pass_form.as_p}}
+   <button type="submit" id="" name="" valie="">reset</button>
+</form>
+
+{% endif %}
+
+
+{% endblock %}

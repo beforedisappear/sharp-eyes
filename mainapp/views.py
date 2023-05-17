@@ -1,4 +1,5 @@
 from typing import Any, Dict, Optional
+from django import http
 from django.db import models
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
@@ -14,21 +15,76 @@ from django.views.generic.edit import FormMixin, FormView
 from .models import *
 from .forms import *
 from .dairy_calendar import Calendar
-from .utils import get_date, prev_month, next_month, send_mail_for_reset
+from .utils import get_date, prev_month, next_month, send_mail_for_verify, send_mail_for_reset
 from datetime import datetime
 from base64 import urlsafe_b64decode
 
 
 
-class HomePage(TemplateView):
+class HomePage(FormMixin, TemplateView):
    template_name = "mainapp/index.html"
+   form_class = UserAuthentication
    
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
       return context
-   
+
    def post(self, request):
-      return HttpResponse('correct')
+      
+      #authorization
+      if len(request.POST) == 3:
+         self.form = self.get_form()
+         if self.form.is_valid():
+            fv = self.form.cleaned_data
+            user = authenticate(username=fv["username"], password=fv["password"])
+            if user is not None:  #and user.email_verify == True:
+               login(request, user)
+               #return JsonResponse(data={}, status=201)
+               return HttpResponseRedirect(reverse('home'))
+            else:
+               #return JsonResponse(data={'errors':{'email': 'Аккаунт не активен!'}}, status=400)
+               return HttpResponse('incorrect email adress or password')
+         else:
+            #return JsonResponse(data={'errors': self.form.errors, }, status=400)
+            return HttpResponse('invalid form')
+        
+      #registration
+      elif len(request.POST) == 5:
+         self.form_class = UserRegistration
+         self.form = self.get_form()
+         if self.form.is_valid():
+            self.object = self.form.save()
+            mail = self.form.cleaned_data.get('email')
+            self.object.email = mail.lower()
+            self.object.save()
+            send_mail_for_verify(request, self.object)
+            #return JsonResponse(data={}, status=201)
+            return HttpResponse('the letter has been sent to your email')
+            
+         else:
+            #return JsonResponse(data={'errors': self.form.errors,}, status=400)
+            return HttpResponse('invalid form')
+           
+      #restoring account access
+      elif len(request.POST) == 2:
+         self.form_class = PasswordResetForm
+         self.form = self.get_form()
+         if self.form.is_valid():
+            data = self.form.cleaned_data.get('email').lower()
+            try:
+               user = MyUser.objects.get(email = data)
+               send_mail_for_reset(request, user)
+               #return JsonResponse(data={}, status=201)
+               return HttpResponse('the letter has been sent to your email')
+            except:
+               #return JsonResponse(data={'errors': {'email': 'Аккаунт не найден!'}}, status=400)
+               return HttpResponse('the user with this email address does not exist')
+         else:
+            #return JsonResponse(data={'errors': {'email': 'Некорректный email адрес!'}}, status=400)
+            return HttpResponse('invalid form')
+            
+      else:
+         return HttpResponse('error!')
 
 
 class ProfilePage(UpdateView):
@@ -158,14 +214,15 @@ def logout_user(request):
    logout(request)
    return redirect('/')
 
+
 class EmailVerify(LoginView):
 
    def get(self, request, uidb64, token):
       user = self.get_user(uidb64)
       if user is not None and gtoken.check_token(user, token):
-         #user.email_verify = True
-         #user.save()
-         #login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+         user.is_active = True
+         user.save()
+         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
          return redirect('home')
       else:
          return HttpResponse('error registration')
@@ -179,9 +236,7 @@ class EmailVerify(LoginView):
       return user
      
      
-     
-INTERNAL_RESET_SESSION_TOKEN = "_password_reset_token"
-
+#PasswordResetConfirmView overriding
 class PasswordResetConfirm(FormView):
    form_class = UserPasswordSet
    success_url = reverse_lazy("home")
@@ -194,17 +249,19 @@ class PasswordResetConfirm(FormView):
         
       if self.user is not None:
          token = kwargs["token"]
+         # If the token is valid, display the password reset form.
          if token == self.reset_url_token:
-            session_token = self.request.session.get(INTERNAL_RESET_SESSION_TOKEN)
+            session_token = self.request.session.get("_password_reset_token")
             if gtoken.check_token(self.user, session_token):
                self.validlink = True
-               return super().dispatch(*args, **kwargs)
-            
+               return super().dispatch(*args, **kwargs) # get and post request
+
+         #token validation and redirect to new url (w/o token) 
          else:
             if gtoken.check_token(self.user, token):
-               self.request.session[INTERNAL_RESET_SESSION_TOKEN] = token
+               self.request.session["_password_reset_token"] = token
                redirect_url = self.request.path.replace(token, self.reset_url_token)
-               return HttpResponseRedirect(redirect_url)    
+               return HttpResponseRedirect(redirect_url) #get request
         
       return HttpResponse('reset error')
     
@@ -223,6 +280,6 @@ class PasswordResetConfirm(FormView):
     
    def form_valid(self, form):
       user = form.save()
-      del self.request.session[INTERNAL_RESET_SESSION_TOKEN]
+      del self.request.session["_password_reset_token"]
       login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
       return super().form_valid(form)

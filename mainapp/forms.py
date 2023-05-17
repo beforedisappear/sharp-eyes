@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 
 from .models import *
@@ -51,3 +52,36 @@ class UserPasswordReset(PasswordResetForm):
       
 class UserPasswordSet(SetPasswordForm):
    pass
+
+class UserRegistration(UserCreationForm):
+   
+   password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"class": "text-field__input"}))
+   password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"class": "text-field__input"}),)
+      
+   def __init__(self, *args, **kwargs):
+        super(UserCreationForm, self).__init__(*args, **kwargs)
+        self.fields['username'].help_text = ''
+        self.fields['password1'].help_text = ''
+        self.fields['password2'].help_text = ''
+
+   def clean(self):
+      email = self.cleaned_data.get('email')
+      if email is not None and MyUser.objects.filter(email=email.lower()).exists():
+         raise ValidationError("Данный Email уже занят!")
+      return self.cleaned_data
+        
+   class Meta(UserCreationForm.Meta):
+      model = get_user_model()
+      fields = ['email', 'username', 'password1']
+      widgets = {'email': forms.TextInput(attrs={"class": "text-field__input"}),
+                 'username': forms.TextInput(attrs={"class": "text-field__input"}),
+      }
+      
+      
+class UserAuthentication(AuthenticationForm):
+   # email = username
+   def clean(self):
+      data = self.data.copy()
+      data['username'] = data['username'].lower()
+      return data
+   
