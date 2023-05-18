@@ -1,12 +1,9 @@
-from typing import Any, Dict, Optional
-from django import http
-from django.db import models
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
-from django.db.models.query import QuerySet
+from django.utils.decorators import method_decorator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import View, ListView, DetailView, TemplateView, UpdateView, CreateView
+from django.views.generic import ListView, TemplateView, UpdateView
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.tokens import default_token_generator as gtoken
@@ -15,10 +12,9 @@ from django.views.generic.edit import FormMixin, FormView
 from .models import *
 from .forms import *
 from .dairy_calendar import Calendar
-from .utils import get_date, prev_month, next_month, send_mail_for_verify, send_mail_for_reset
+from .utils import get_date, prev_month, next_month, send_mail_for_verify, send_mail_for_reset, get_social_media
 from datetime import datetime
 from base64 import urlsafe_b64decode
-
 
 
 class HomePage(FormMixin, TemplateView):
@@ -40,7 +36,7 @@ class HomePage(FormMixin, TemplateView):
             if user is not None:  #and user.email_verify == True:
                login(request, user)
                #return JsonResponse(data={}, status=201)
-               return HttpResponseRedirect(reverse('home'))
+               return HttpResponseRedirect(ProfilePage.get_success_url(self))
             else:
                #return JsonResponse(data={'errors':{'email': 'Аккаунт не активен!'}}, status=400)
                return HttpResponse('incorrect email adress or password')
@@ -87,6 +83,9 @@ class HomePage(FormMixin, TemplateView):
          return HttpResponse('error!')
 
 
+class LandingPage(TemplateView):
+   template_name = "mainapp/about.html"
+
 class ProfilePage(UpdateView):
    template_name = "mainapp/profilepage.html"
    model = get_user_model()
@@ -99,8 +98,10 @@ class ProfilePage(UpdateView):
    
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
-      context["thisuser"] = self.request.user
+      thisuser = self.request.user
+      context["thisuser"] = thisuser
       context["title"] = "SHARP EYES | Личный кабинет"
+      context['social'] = get_social_media(thisuser)
       return context
       
    def get(self, request, *args, **kwargs):

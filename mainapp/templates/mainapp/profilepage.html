@@ -19,5 +19,45 @@
    <button type="submit" id="">Изменить пароль</button>
 </form>
 
+<br>------------------------------------------------</br>
+
+{% if social.google %}
+   {% if social.can_disconnect  %}
+      <form method="post" action="{% url 'social:disconnect' 'google-oauth2' %}">
+         {% csrf_token %}
+         <button type="submit">Disconnect from Google</button>
+      </form>
+   {% else %}
+      <button type="button" disabled>Disconnect from Google</button>
+      <!--
+      <p style="color: red">You must define a password for your account before disconnecting from Telegram.</p>
+      <p> We sent  you a letter on your email to set password </p>-->
+   {% endif %}
+{% else %}
+   <a href="{% url "social:begin" "google-oauth2" %}" class="btn_google">
+      <img src="{% static 'mainapp/images/google.png' %}" width='21px' height='21px'>&nbspВойти через Google
+   </a>
+{% endif %}
+
+<br></br>
+
+{% if social.tg %}
+   {% if social.can_disconnect  %}
+      <form method="post" action="{% url 'social:disconnect' 'telegram' %}">
+         {% csrf_token %}
+         <button type="submit">Disconnect from Telegram</button>
+      </form>
+   {% else %}
+      <button type="button" disabled>Disconnect from Telegram</button>
+      <!--
+      <p style="color: red">You must define a password for your account before disconnecting from Telegram.</p>
+      <p> We sent  you a letter on your email to set password </p>-->
+   {% endif %}
+{% else %}
+   <a class='btn_telegram'>
+      <script async src="https://telegram.org/js/telegram-widget.js?21" data-userpic="false" data-telegram-login="jespersitebot" data-size="medium" data-auth-url="http://mysite.com/social-auth/complete/telegram" data-request-access="write"></script>
+   </a>
+{% endif %}
+
 
 {% endblock %}

@@ -55,3 +55,48 @@
 .clearfix {
   margin: 15px;
 }
+
+
+.btn_telegram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #54aaeb;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, #54aaeb, #54aaeb);
+  color: #ffffff;
+  text-decoration: none;
+  width: 200px;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+.btn_telegram:hover {
+  text-decoration: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.btn_google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  border: 1px solid #d62d20;
+  border-radius: 3px;
+  background: #54aaeb;
+  background: linear-gradient(to bottom, #d62d20, #d62d20);
+  color: #ffffff;
+  text-decoration: none;
+  cursor: default;
+  width: 200px;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+.btn_google:hover {
+  text-decoration: none;
+  color: #ffffff;
+  cursor: pointer;
+}

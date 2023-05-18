@@ -5,9 +5,10 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 
-from base64 import urlsafe_b64encode
 from sharpeyes.settings import EMAIL_HOST_USER, SECRET_KEY
+from social_django.models import UserSocialAuth
 from datetime import datetime, timedelta, date
+from base64 import urlsafe_b64encode
 from calendar import monthrange
 
 
@@ -87,3 +88,20 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
+
+
+def get_social_media(user):
+    try:
+        telegram_login = user.social_auth.get(provider='telegram')
+    except UserSocialAuth.DoesNotExist:
+        telegram_login = None
+        
+    try:
+        google_login = user.social_auth.get(provider='google-oauth2')
+    except UserSocialAuth.DoesNotExist:
+        google_login = None
+            
+    can_disconnect = (user.social_auth.count() > 1 or user.has_usable_password())
+        
+    auth_context = {'google': google_login, "tg": telegram_login, 'can_disconnect': can_disconnect, }
+    return auth_context
