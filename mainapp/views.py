@@ -1,5 +1,5 @@
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, BadRequest
 from django.utils.decorators import method_decorator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -8,11 +8,12 @@ from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.tokens import default_token_generator as gtoken
 from django.views.generic.edit import FormMixin, FormView
+from django.core.validators import validate_email
 
 from .models import *
 from .forms import *
 from .dairy_calendar import Calendar
-from .utils import get_date, prev_month, next_month, send_mail_for_verify, send_mail_for_reset, get_social_media
+from .utils import get_date, prev_month, next_month, send_mail_for_verify, send_mail_for_reset, get_social_media, send_mail_for_changing_email
 from datetime import datetime
 from base64 import urlsafe_b64decode
 
@@ -86,6 +87,7 @@ class HomePage(FormMixin, TemplateView):
 class LandingPage(TemplateView):
    template_name = "mainapp/about.html"
 
+
 class ProfilePage(UpdateView):
    template_name = "mainapp/profilepage.html"
    model = get_user_model()
@@ -122,16 +124,17 @@ class ProfilePage(UpdateView):
       form = UserChangeCustom(request.POST, request.FILES, instance=request.user)
       
       if form.is_valid():
-         #username = form.cleaned_data.get('username')
-         #return JsonResponse(data={}, status=201) 
          form.save()
-         return HttpResponseRedirect(self.get_success_url())         
+         send_mail_for_changing_email(self.request, self.request.user, form.cleaned_data.get('emailfield'))
+         #return HttpResponseRedirect(self.get_success_url())
+         #return JsonResponse(data={}, status=201)          
+         return HttpResponse("Мы отправили письмо для подтверждения нового адреса")
       else:
-         #err = form.errors
+         err = form.errors
          #return JsonResponse(data={'errors': err, }, status=400)
          form = UserChangeCustom()
-         return HttpResponse('incorrect')
-         
+         return HttpResponse(err.values())
+      
 
 #CreateView + UpdateView, get_object overriding
 class ProgressPage(UpdateView):
@@ -264,7 +267,7 @@ class PasswordResetConfirm(FormView):
                redirect_url = self.request.path.replace(token, self.reset_url_token)
                return HttpResponseRedirect(redirect_url) #get request
         
-      return HttpResponse('reset error')
+      return HttpResponse('the link is invalid')
     
    def get_user(self, uidb64):
       try:
@@ -284,3 +287,29 @@ class PasswordResetConfirm(FormView):
       del self.request.session["_password_reset_token"]
       login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
       return super().form_valid(form)
+   
+   
+class EmailChanging(TemplateView):
+
+   def get(self, request, uidb64, token, newemail):
+      user = self.get_user(uidb64)
+      if user is not None and gtoken.check_token(user, token):
+         try:
+            email_address = urlsafe_b64decode(newemail[1::]).decode()
+            validate_email(email_address)
+            user.email = email_address
+            user.save()
+            return redirect('home')
+         except:
+            raise BadRequest
+            
+      else:
+         return HttpResponse('the link is invalid')
+    
+   def get_user(self, uidb64):
+      try:
+         uid = urlsafe_b64decode(uidb64[1::]).decode()
+         user = MyUser.objects.get(pk = uid)
+      except (TypeError, ValueError, OverflowError, MyUser.DoesNotExist, forms.ValidationError):
+         user = None
+      return user

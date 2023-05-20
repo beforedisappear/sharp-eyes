@@ -1,0 +1,10 @@
+{% autoescape off %}
+
+Hello, {{ user.username }}!
+Вы решили изменить почту. Нажать на кнопку, чтобы подтвердить это.
+http://{{domain}}{% url 'useremailchange' uidb64=uid token=token newemail=newemail %} 
+
+Ссылка действительна в течение двух часов.
+
+
+{% endautoescape %}

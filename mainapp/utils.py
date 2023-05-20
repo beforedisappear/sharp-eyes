@@ -51,8 +51,20 @@ def send_mail_for_reset(request, user):
     }
     message = render_to_string('mainapp/email-password-reset.html', context = context)
     send_mail('SHARPEYES | Восстановление доступа', message, EMAIL_HOST_USER, [user.email], fail_silently=False)
- 
 
+def send_mail_for_changing_email(request, user, email):
+    current_site = get_current_site(request)
+    context = {
+      'user' : user,
+      'domain': current_site.domain,
+      'uid': urlsafe_b64encode(force_bytes(user.pk)),
+      'token': token._make_token_with_timestamp(user, token._num_seconds(token._now()), SECRET_KEY),
+      'newemail': urlsafe_b64encode(force_bytes(email)), 
+    }
+    message = render_to_string('mainapp/email-address-changing.html', context = context)
+    send_mail('SHARPEYES | Изменение адреса почты', message, EMAIL_HOST_USER, [email], fail_silently=False)
+    
+    
 def get_date(req_month):
     if req_month:
         #request restriction

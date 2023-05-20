@@ -1,12 +1,14 @@
-from django import forms
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-
+from django import forms
 
 from .models import *
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm, SetPasswordForm, UserChangeForm
+from .utils import correct_email
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordResetForm, SetPasswordForm
 
+    
 class ProgressFilling(forms.ModelForm):
 
    def __init__(self, *args, **kwargs):
@@ -34,24 +36,39 @@ class ProgressFilling(forms.ModelForm):
       fields = ['sharpness_vision', 'colorness_vision', 'peripheral_vision', 'binocular_vision', 'additional_info']
       
       
-class UserChangeCustom(UserChangeForm):
+class UserChangeCustom(forms.ModelForm):
+   emailfield = forms.EmailField(label="Адрес почты")
    
    def __init__(self, *args, **kwargs):
-      super(UserChangeForm, self).__init__(*args, **kwargs)
-      del self.fields['password']
+      super(UserChangeCustom, self).__init__(*args, **kwargs)
       self.fields["sex"].choices = [("", ""),] + list(self.fields["sex"].choices)[1:]
+      try:
+         self.fields["emailfield"].initial = kwargs['instance']
+      except:
+         self.fields["emailfield"].initial = ""
+         
 
+   def clean(self):
+      cleaned_data = super().clean()
+      email = cleaned_data['emailfield']
+      if MyUser.objects.filter(email=correct_email(email)).exclude(email=self.instance.email).exists():
+         raise ValidationError("Пользователь с таким email уже зарегистрирован")
+      else:
+         return cleaned_data
+   
    class Meta:
       model = get_user_model()
-      fields = ('userpic', 'email', 'username', 'birthdate', 'sex', 'notification')
+      fields = ('userpic','emailfield', 'username', 'birthdate', 'sex', 'notification')
       widgets = {'birthdate': forms.DateInput(attrs={"placeholder": 'ДД.ММ.ГГГГ'}),}
-
+   
 
 class UserPasswordReset(PasswordResetForm):
    pass  
       
+      
 class UserPasswordSet(SetPasswordForm):
    pass
+
 
 class UserRegistration(UserCreationForm):
    
@@ -59,10 +76,10 @@ class UserRegistration(UserCreationForm):
    password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"class": "text-field__input"}),)
       
    def __init__(self, *args, **kwargs):
-        super(UserCreationForm, self).__init__(*args, **kwargs)
-        self.fields['username'].help_text = ''
-        self.fields['password1'].help_text = ''
-        self.fields['password2'].help_text = ''
+      super(UserCreationForm, self).__init__(*args, **kwargs)
+      self.fields['username'].help_text = ''
+      self.fields['password1'].help_text = ''
+      self.fields['password2'].help_text = ''
 
    def clean(self):
       email = self.cleaned_data.get('email')

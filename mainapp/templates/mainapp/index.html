@@ -6,6 +6,7 @@
 
 {% if request.user.is_authenticated %}
 
+<a href="{{ request.user.get_absolute_url }}"><p>Профиль</p></a>
 <a href="{% url 'logout' %}"><p>Выйти</p></a>
 
 
@@ -27,7 +28,7 @@
 </form>
 
 <a href="{% url "social:begin" "google-oauth2" %}" class="btn_google">
-   <img src="{% static 'mainapp/images/google.png' %}" width='21px' height='21px'>&nbspВойти через Google
+   <img src="" width='21px' height='21px'>&nbspВойти через Google
  </a>
  <a class='btn_telegram'>
    <script async src="https://telegram.org/js/telegram-widget.js?21" data-userpic="false" data-telegram-login="jespersitebot" data-size="medium" data-auth-url="http://mysite.com/social-auth/complete/telegram" data-request-access="write"></script>

@@ -12,5 +12,6 @@ urlpatterns = [
    path('logout/', logout_user, name='logout'),
    path('account/active/<uidb64>/<token>/', EmailVerify.as_view(), name='userverify'),
    path('account/reset/<uidb64>/<token>/', PasswordResetConfirm.as_view(), name='userpasswordreset'),
+   path('account/change/<uidb64>/<token>/<newemail>', EmailChanging.as_view(), name='useremailchange'),
    path('social-auth/', include('social_django.urls', namespace='social')),
 ]
