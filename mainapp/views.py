@@ -1,7 +1,10 @@
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import PermissionDenied, BadRequest
+from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.contrib.auth import login, logout, authenticate, get_user_model
@@ -12,8 +15,9 @@ from django.core.validators import validate_email
 
 from .models import *
 from .forms import *
+from .utils import next_month, send_mail_for_verify, send_mail_for_reset
+from .utils import get_date, prev_month, get_social_media
 from .dairy_calendar import Calendar
-from .utils import get_date, prev_month, next_month, send_mail_for_verify, send_mail_for_reset, get_social_media, send_mail_for_changing_email
 from datetime import datetime
 from base64 import urlsafe_b64decode
 
@@ -24,17 +28,18 @@ class HomePage(FormMixin, TemplateView):
    
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
+      context["title"] = "SHARP EYES | Главная страница"
       return context
 
    def post(self, request):
       
       #authorization
       if len(request.POST) == 3:
-         self.form = self.get_form()
-         if self.form.is_valid():
-            fv = self.form.cleaned_data
+         form = self.get_form()
+         if form.is_valid():
+            fv = form.cleaned_data
             user = authenticate(username=fv["username"], password=fv["password"])
-            if user is not None:  #and user.email_verify == True:
+            if user is not None:
                login(request, user)
                #return JsonResponse(data={}, status=201)
                return HttpResponseRedirect(ProfilePage.get_success_url(self))
@@ -43,7 +48,7 @@ class HomePage(FormMixin, TemplateView):
                return HttpResponse('incorrect email adress or password')
          else:
             #return JsonResponse(data={'errors': self.form.errors, }, status=400)
-            return HttpResponse('invalid form')
+            return HttpResponse(form.errors.values())
         
       #registration
       elif len(request.POST) == 5:
@@ -51,25 +56,22 @@ class HomePage(FormMixin, TemplateView):
          self.form = self.get_form()
          if self.form.is_valid():
             self.object = self.form.save()
-            mail = self.form.cleaned_data.get('email')
-            self.object.email = mail.lower()
-            self.object.save()
             send_mail_for_verify(request, self.object)
             #return JsonResponse(data={}, status=201)
             return HttpResponse('the letter has been sent to your email')
             
          else:
             #return JsonResponse(data={'errors': self.form.errors,}, status=400)
-            return HttpResponse('invalid form')
+            return HttpResponse(self.form.errors.values())
            
       #restoring account access
       elif len(request.POST) == 2:
-         self.form_class = PasswordResetForm
+         self.form_class = UserPasswordReset
          self.form = self.get_form()
          if self.form.is_valid():
-            data = self.form.cleaned_data.get('email').lower()
+            data = self.form.cleaned_data.get('email')
             try:
-               user = MyUser.objects.get(email = data)
+               user = MyUser.objects.get(email = data, is_active = True)
                send_mail_for_reset(request, user)
                #return JsonResponse(data={}, status=201)
                return HttpResponse('the letter has been sent to your email')
@@ -78,7 +80,7 @@ class HomePage(FormMixin, TemplateView):
                return HttpResponse('the user with this email address does not exist')
          else:
             #return JsonResponse(data={'errors': {'email': 'Некорректный email адрес!'}}, status=400)
-            return HttpResponse('invalid form')
+            return HttpResponse(self.form.errors.values())
             
       else:
          return HttpResponse('error!')
@@ -86,6 +88,11 @@ class HomePage(FormMixin, TemplateView):
 
 class LandingPage(TemplateView):
    template_name = "mainapp/about.html"
+   
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context["title"] = "SHARP EYES | О проекте"
+      return context
 
 
 class ProfilePage(UpdateView):
@@ -97,13 +104,10 @@ class ProfilePage(UpdateView):
    slug_url_kwarg = "userslug"
    form_class = UserChangeCustom
    
-   
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
-      thisuser = self.request.user
-      context["thisuser"] = thisuser
       context["title"] = "SHARP EYES | Личный кабинет"
-      context['social'] = get_social_media(thisuser)
+      context["social"] = get_social_media(self.request.user)
       return context
       
    def get(self, request, *args, **kwargs):
@@ -111,7 +115,7 @@ class ProfilePage(UpdateView):
       if user is not None and user == request.user:
          return super(ProfilePage, self).get(request, *args, **kwargs)
       else:
-         raise PermissionDenied #redirect to login page
+         return redirect('home')
    
    def get_success_url(self, **kwargs):
       return reverse_lazy("profilepage", kwargs={'userslug': self.request.user.userslug})
@@ -125,10 +129,14 @@ class ProfilePage(UpdateView):
       
       if form.is_valid():
          form.save()
-         send_mail_for_changing_email(self.request, self.request.user, form.cleaned_data.get('emailfield'))
+         email = form.data['emailfield'].lower()
+         if email != request.user.email:
+            send_mail_for_changing_email(self.request, self.request.user, email)
+            return HttpResponse("Мы отправили письмо для подтверждения нового адреса / Настройки обновлены")
+
          #return HttpResponseRedirect(self.get_success_url())
          #return JsonResponse(data={}, status=201)          
-         return HttpResponse("Мы отправили письмо для подтверждения нового адреса")
+         return HttpResponse("Настройки обновлены")
       else:
          err = form.errors
          #return JsonResponse(data={'errors': err, }, status=400)
@@ -154,7 +162,7 @@ class ProgressPage(UpdateView):
       if user is not None and user == request.user:
          return super(ProgressPage, self).get(request, *args, **kwargs)
       else:
-         raise PermissionDenied #redirect to login page
+         raise PermissionDenied
    
    def post(self, request, userslug):
       form = self.get_form()
@@ -199,8 +207,13 @@ class MyDiary(ListView):
    model = DayProgress
    template_name = "mainapp/diary.html"
    
+   @method_decorator(login_required(login_url='/'), name="dispatch")
+   def dispatch(self, *args, **kwargs):
+        return super(MyDiary, self).dispatch(*args, **kwargs)
+     
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
+      context['title'] = "SHARP EYES | Дневник самоконтроля"
       d = get_date(self.request.GET.get('month', None))
       if d is None:
          raise Http404
@@ -221,6 +234,8 @@ def logout_user(request):
 
 class EmailVerify(LoginView):
 
+   @method_decorator(sensitive_post_parameters())
+   @method_decorator(never_cache)
    def get(self, request, uidb64, token):
       user = self.get_user(uidb64)
       if user is not None and gtoken.check_token(user, token):
@@ -246,8 +261,13 @@ class PasswordResetConfirm(FormView):
    success_url = reverse_lazy("home")
    template_name = "mainapp/password_reset_confirm.html"
    reset_url_token = "set-password"
-    
+   
+   @method_decorator(sensitive_post_parameters())
+   @method_decorator(never_cache)
    def dispatch(self, *args, **kwargs):
+      if "uidb64" not in kwargs or "token" not in kwargs:
+         raise BadRequest
+            
       self.validlink = False
       self.user = self.get_user(kwargs['uidb64'])
         
@@ -287,10 +307,12 @@ class PasswordResetConfirm(FormView):
       del self.request.session["_password_reset_token"]
       login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
       return super().form_valid(form)
-   
+
    
 class EmailChanging(TemplateView):
 
+   @method_decorator(sensitive_post_parameters())
+   @method_decorator(never_cache)
    def get(self, request, uidb64, token, newemail):
       user = self.get_user(uidb64)
       if user is not None and gtoken.check_token(user, token):

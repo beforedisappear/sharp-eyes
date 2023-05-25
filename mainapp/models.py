@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from .utils import user_directory_path, correct_email
+from .utils import user_directory_path
 
 from uuslug import slugify
 
@@ -13,7 +13,8 @@ class CustomAccountManager(BaseUserManager):
    def create_user(self, email, username, password=None, **extra_fields):
       if not email:
          raise ValueError(_('Please provide an email address'))
-      user=self.model(username=username, email=correct_email(email), **extra_fields)
+      print(email)
+      user=self.model(username=username, email=email.lower(), **extra_fields)
       user.set_password(password)
       user.save()
       return user
@@ -27,7 +28,7 @@ class CustomAccountManager(BaseUserManager):
       if extra_fields.get('is_superuser') is not True:
          raise ValueError(_('Please assign is_superuser=True for superuser'))
       return self.create_user(email, username, password, **extra_fields)
-   
+
 class MyUser(AbstractBaseUser, PermissionsMixin):
    id = models.AutoField(_('id'),primary_key=True)
    email = models.EmailField(_('Адрес Почты'), unique=True)

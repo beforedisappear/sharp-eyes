@@ -3,8 +3,6 @@
 
 {% block content %}
 
-{{thisuser}}
-
 <br>------------------------------------------------</br>
 <form id="useredit" method="POST" class="" enctype="">
    {% csrf_token %}
@@ -60,4 +58,5 @@
 {% endif %}
 
 
+<br><a href="{% url 'logout' %}"><p>Выйти</p></a></br>
 {% endblock %}
