@@ -11,6 +11,13 @@ from datetime import datetime, timedelta, date
 from base64 import urlsafe_b64encode
 from calendar import monthrange
 
+messages = {"email": "Неправильный email или пароль",
+            "reg": "Мы отправили письмо для завершения регистрации на указанный email",
+            "res": "Мы отправили письмо для сброса пароля на ваш email",
+            "inc": "Неправильный email или пароль",
+            "act": "Пользователь не существует или аккаунт не активирован",
+            "err": "Непредвиденная ошибка", }
+
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/users/user_<username>/<filename>

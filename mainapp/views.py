@@ -1,4 +1,4 @@
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied, BadRequest
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -16,15 +16,14 @@ from django.core.validators import validate_email
 from .models import *
 from .forms import *
 from .utils import next_month, send_mail_for_verify, send_mail_for_reset
-from .utils import get_date, prev_month, get_social_media
+from .utils import get_date, prev_month, get_social_media, messages
 from .dairy_calendar import Calendar
 from datetime import datetime
 from base64 import urlsafe_b64decode
 
 
-class HomePage(FormMixin, TemplateView):
+class HomePage(TemplateView):
    template_name = "mainapp/index.html"
-   form_class = UserAuthentication
    
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
@@ -35,55 +34,47 @@ class HomePage(FormMixin, TemplateView):
       
       #authorization
       if len(request.POST) == 3:
-         form = self.get_form()
+         form = UserAuthentication(None, data=request.POST)
          if form.is_valid():
             fv = form.cleaned_data
             user = authenticate(username=fv["username"], password=fv["password"])
             if user is not None:
                login(request, user)
-               #return JsonResponse(data={}, status=201)
-               return HttpResponseRedirect(ProfilePage.get_success_url(self))
+               return HttpResponseRedirect(user.get_absolute_url())
             else:
-               #return JsonResponse(data={'errors':{'email': 'Аккаунт не активен!'}}, status=400)
-               return HttpResponse('incorrect email adress or password')
+               return JsonResponse(data={"errors": messages["email"]}, status=400, json_dumps_params={"ensure_ascii": False})
          else:
-            #return JsonResponse(data={'errors': self.form.errors, }, status=400)
-            return HttpResponse(form.errors.values())
+            return JsonResponse(data={"errors": form.errors }, status=400, json_dumps_params={"ensure_ascii": False})
         
       #registration
       elif len(request.POST) == 5:
-         self.form_class = UserRegistration
-         self.form = self.get_form()
+         self.form = UserRegistration(request.POST)
          if self.form.is_valid():
             self.object = self.form.save()
             send_mail_for_verify(request, self.object)
-            #return JsonResponse(data={}, status=201)
-            return HttpResponse('the letter has been sent to your email')
-            
+            return JsonResponse(data={"success": messages["reg"]}, status=201)
+         
          else:
-            #return JsonResponse(data={'errors': self.form.errors,}, status=400)
-            return HttpResponse(self.form.errors.values())
+            return JsonResponse(data={'errors': self.form.errors }, status=400, json_dumps_params={"ensure_ascii": False})
            
       #restoring account access
       elif len(request.POST) == 2:
-         self.form_class = UserPasswordReset
-         self.form = self.get_form()
+         self.form = UserPasswordReset(request.POST)
          if self.form.is_valid():
             data = self.form.cleaned_data.get('email')
             try:
                user = MyUser.objects.get(email = data, is_active = True)
                send_mail_for_reset(request, user)
-               #return JsonResponse(data={}, status=201)
-               return HttpResponse('the letter has been sent to your email')
+               return JsonResponse(data={"success": messages["res"]}, status=201)
+            
             except:
-               #return JsonResponse(data={'errors': {'email': 'Аккаунт не найден!'}}, status=400)
-               return HttpResponse('the user with this email address does not exist')
+               return JsonResponse(data={'errors': messages["act"] }, status=400, json_dumps_params={"ensure_ascii": False})
          else:
-            #return JsonResponse(data={'errors': {'email': 'Некорректный email адрес!'}}, status=400)
-            return HttpResponse(self.form.errors.values())
+            return JsonResponse(data={'errors': self.form.errors }, status=400, json_dumps_params={"ensure_ascii": False})
+            
             
       else:
-         return HttpResponse('error!')
+         return JsonResponse(data={'errors': messages["err"] }, status=400, json_dumps_params={"ensure_ascii": False})
 
 
 class LandingPage(TemplateView):
@@ -116,14 +107,12 @@ class ProfilePage(UpdateView):
          return super(ProfilePage, self).get(request, *args, **kwargs)
       else:
          return redirect('home')
-   
-   def get_success_url(self, **kwargs):
-      return reverse_lazy("profilepage", kwargs={'userslug': self.request.user.userslug})
      
    def post(self, request, *args, **kwargs):
       if len(request.POST) == 1:
          send_mail_for_reset(request, request.user)
-         return HttpResponseRedirect(self.get_success_url())
+         #return HttpResponseRedirect(request.user.get_absolute_url())
+         return HttpResponse("Мы отправили письмо для изменения пароля")
       
       form = UserChangeCustom(request.POST, request.FILES, instance=request.user)
       
@@ -134,7 +123,7 @@ class ProfilePage(UpdateView):
             send_mail_for_changing_email(self.request, self.request.user, email)
             return HttpResponse("Мы отправили письмо для подтверждения нового адреса / Настройки обновлены")
 
-         #return HttpResponseRedirect(self.get_success_url())
+         #return HttpResponseRedirect(request.user.get_absolute_url())
          #return JsonResponse(data={}, status=201)          
          return HttpResponse("Настройки обновлены")
       else:
@@ -180,7 +169,7 @@ class ProgressPage(UpdateView):
       progress.binocular_vision = form_values['binocular_vision']
       progress.additional_info = form_values['additional_info']
       progress.save()
-      return HttpResponseRedirect(self.get_success_url())
+      return HttpResponseRedirect(progress.get_absolute_url())
       
       # obj = DayProgress.objects.get(user=self.request.user, current_date=datetime.today().date())
       # obj.delete()
@@ -190,9 +179,6 @@ class ProgressPage(UpdateView):
    def form_invalid(self, form):
         self.object = self.get_object()
         return self.render_to_response(self.get_context_data(form=form))
-
-   def get_success_url(self, **kwargs):
-      return reverse_lazy("progresspage", kwargs={'userslug': self.request.user.userslug})
    
    def get_object(self, queryset=None):
       try:

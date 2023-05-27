@@ -88,6 +88,15 @@ class UserRegistration(UserCreationForm):
      
 class UserAuthentication(AuthenticationForm):
    username = LowercaseEmailField(label="Адрес почты")
+   
+   def clean(self):
+      email = self.cleaned_data.get("username")
+      try:
+         user = MyUser.objects.get(email=email)
+      except:
+         raise ValidationError('Неправильный email')
+      
+      return self.cleaned_data
 
 
 class UserPasswordSet(SetPasswordForm):
