@@ -94,6 +94,21 @@ class LandingPage(TemplateView):
       context["title"] = "SHARP EYES | О проекте"
       return context
 
+class LoginPage(TemplateView):
+   template_name = "mainapp/login.html"
+   
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context["title"] = "SHARP EYES | Авторизация"
+      return context
+   
+class RegisterPage(TemplateView):
+   template_name = "mainapp/register.html"
+   
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context["title"] = "SHARP EYES | Регистрация"
+      return context
 
 class ProfilePage(UpdateView):
    template_name = "mainapp/profilepage.html"

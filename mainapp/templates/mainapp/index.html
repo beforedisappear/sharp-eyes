@@ -3,47 +3,23 @@
 
 {% block content %}
 
+<div class="page-content">
+   <h1 class="project">Проект</h1>
+   <h1 class="brand-title">"Зорькие глазки"</h1>
 
-{% if request.user.is_authenticated %}
+   <h3>Постоянно щуришься и перенапрягаешь глаза?</h3>
+   <h3>Эти простые упражения помогут тебе сохранить зрение!</h3>
+   <h3>Скорее регистрируйся и сделай первые шаги на пути к здоровому зрению =)</h3>
+   
+   <div class="btn-container">
+       <div class="start-btn btn-style">
+           <a href="{% url 'register' %}">Начать</a>
+       </div>
+   </div>
 
-<a href="{{ request.user.get_absolute_url }}"><p>Профиль</p></a>
-<a href="{% url 'logout' %}"><p>Выйти</p></a>
-
-
-{% else %}
-
-<h1><b>регистрация</b></h1>
-<form id="" method="POST" class="" action="">
-   {% csrf_token %}
-   {{user_reg_form.as_p}}
-   <button type="submit" id="" name="" valie="">Sign up</button>
-</form>
-<br></br>
-
-<h1><b>авторизация</b></h1>
-<form id="" method="POST" class="" action="">
-   {% csrf_token %}
-   {{user_log_form.as_p}}
-   <button type="submit" id="" name="" valie="">Sign in</button>
-</form>
-
-<a href="{% url "social:begin" "google-oauth2" %}" class="btn_google">
-   <img src="" width='21px' height='21px'>&nbspВойти через Google
- </a>
- <a class='btn_telegram'>
-   <script async src="https://telegram.org/js/telegram-widget.js?21" data-userpic="false" data-telegram-login="jespersitebot" data-size="medium" data-auth-url="http://mysite.com/social-auth/complete/telegram" data-request-access="write"></script>
-</a>
-
-
-<br></br>
-<h1><b>сбросить пароль</b></h1>
-<form id="" method="POST" class="" action="">
-   {% csrf_token %}
-   {{reset_pass_form.as_p}}
-   <button type="submit" id="" name="" valie="">reset</button>
-</form>
-
-{% endif %}
-
+   <h3 class="btn-text">И обязательно не забудь посетить  врача !</h3>
+</div>
 
 {% endblock %}
+
+

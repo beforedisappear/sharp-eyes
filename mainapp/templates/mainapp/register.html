@@ -1,0 +1,47 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+
+<h1>Вы уже зарегистрированы!</h1>
+<a href="{{ request.user.get_absolute_url }}"><p>Профиль</p></a>
+<a href="{% url 'logout' %}"><p>Выйти</p></a>
+
+{% else %}
+
+<h1><b>регистрация</b></h1>
+<form id="" method="POST" class="" action="">
+   {% csrf_token %}
+   {{user_reg_form.as_p}}
+   <button type="submit" id="" name="" valie="">Sign up</button>
+</form>
+<br></br>
+
+<h1><b>авторизация</b></h1>
+<form id="" method="POST" class="" action="">
+   {% csrf_token %}
+   {{user_log_form.as_p}}
+   <button type="submit" id="" name="" valie="">Sign in</button>
+</form>
+
+<a href="{% url "social:begin" "google-oauth2" %}" class="btn_google">
+   <img src="" width='21px' height='21px'>&nbspВойти через Google
+ </a>
+ <a class='btn_telegram'>
+   <script async src="https://telegram.org/js/telegram-widget.js?21" data-userpic="false" data-telegram-login="jespersitebot" data-size="medium" data-auth-url="http://mysite.com/social-auth/complete/telegram" data-request-access="write"></script>
+</a>
+
+
+<br></br>
+<h1><b>сбросить пароль</b></h1>
+<form id="" method="POST" class="" action="">
+   {% csrf_token %}
+   {{reset_pass_form.as_p}}
+   <button type="submit" id="" name="" valie="">reset</button>
+</form>
+
+{% endif %}
+
+{% endblock %}

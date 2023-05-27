@@ -1,0 +1,121 @@
+body {
+    margin: 0px;
+    /* font-family: 'Poppins', sans-serif; */
+    font-family: 'Montserrat', sans-serif;
+}
+
+body a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* header styling */
+header {
+    text-align: center;
+    padding: 20px 0px 15px 0px;
+    color: #4c67ad;
+    /* border: solid 5px #000; */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo-container {
+    margin-left: 10%;
+    display: flex;
+    align-items: center;
+    /* border: solid 5px #000; */
+}
+
+.logo-container img {
+    height: 100px;
+    width: 100px;
+    padding: 5px;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0px 15px;
+    background-image: linear-gradient(180deg, #406BDA, rgba(96, 131, 220, 0.46));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-container {
+    width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-right: 10%;
+    /* border: solid 5px #000; */
+}
+
+.nav-container .nav-link {
+    padding: 5px 20px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* background gradient for buttons */
+.btn-style {
+    background: linear-gradient(180deg, #406BDA, rgba(96, 131, 220, 0.46));
+    color: white;
+    border: solid 0px;
+    border-radius: 40px;
+}
+
+/* page content styling  */
+.page-content {
+    text-align: start;
+    width: 800px;
+    margin: 0px auto;
+}
+
+.page-content h1 {
+    background-image: linear-gradient(180deg, #406BDA, rgba(96, 131, 220, 0.46));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 10px 0px;
+}
+
+.project {
+    font-size: 36px;
+}
+
+.brand-title {
+    font-size: 50px;
+}
+
+.page-content h3 {
+    font-weight: 100;
+    margin: 40px 0px;
+} 
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 180px;
+}
+
+.start-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 430px;
+    height: 86px;
+}
+
+.start-btn a {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.btn-text {
+    text-align: center;
+}
