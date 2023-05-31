@@ -5,7 +5,8 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 
-from sharpeyes.settings import EMAIL_HOST_USER, SECRET_KEY
+from sharpeyes.settings.base import SECRET_KEY
+from sharpeyes.settings.email_settings import EMAIL_HOST_USER
 from social_django.models import UserSocialAuth
 from datetime import datetime, timedelta, date
 from base64 import urlsafe_b64encode
@@ -16,7 +17,15 @@ messages = {"email": "Неправильный email или пароль",
             "res": "Мы отправили письмо для сброса пароля на ваш email",
             "inc": "Неправильный email или пароль",
             "act": "Пользователь не существует или аккаунт не активирован",
-            "err": "Непредвиденная ошибка", }
+            "err": "Непредвиденная ошибка", 
+            "upd": "Настройки обновлены",
+            "svd": "Данные сохранены",
+            "upd-em": ["Настройки обновлены", "Мы отправили письмо для подтверждения нового адреса"],
+            "scs": "Регистрация успешно завершена",
+            "scs1": "Email успешно обновлен",
+            "lnk": "Ссылка больше недействительна",}
+
+jsn_cfg = {"ensure_ascii": False}
 
 
 def user_directory_path(instance, filename):
@@ -47,6 +56,7 @@ def send_mail_for_reset(request, user):
     }
     message = render_to_string('mainapp/email-password-reset.html', context = context)
     send_mail('SHARPEYES | Восстановление доступа', message, EMAIL_HOST_USER, [user.email], fail_silently=False)
+
 
 def send_mail_for_changing_email(request, user, email):
     current_site = get_current_site(request)
