@@ -1,5 +1,6 @@
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied, BadRequest
+from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
@@ -16,15 +17,15 @@ from django.core.validators import validate_email
 from .models import *
 from .forms import *
 from .utils import next_month, send_mail_for_verify, send_mail_for_reset
-from .utils import get_date, prev_month, get_social_media
+from .utils import get_date, prev_month, get_social_media, messages, jsn_cfg
 from .dairy_calendar import Calendar
 from datetime import datetime
 from base64 import urlsafe_b64decode
+import json
 
 
-class HomePage(FormMixin, TemplateView):
+class HomePage(TemplateView):
    template_name = "mainapp/index.html"
-   form_class = UserAuthentication
    
    def get_context_data(self, **kwargs):
       context = super().get_context_data(**kwargs)
@@ -35,55 +36,47 @@ class HomePage(FormMixin, TemplateView):
       
       #authorization
       if len(request.POST) == 3:
-         form = self.get_form()
+         form = UserAuthentication(None, data=request.POST)
          if form.is_valid():
             fv = form.cleaned_data
             user = authenticate(username=fv["username"], password=fv["password"])
             if user is not None:
                login(request, user)
-               #return JsonResponse(data={}, status=201)
-               return HttpResponseRedirect(ProfilePage.get_success_url(self))
+               return HttpResponseRedirect(user.get_absolute_url())
             else:
-               #return JsonResponse(data={'errors':{'email': 'Аккаунт не активен!'}}, status=400)
-               return HttpResponse('incorrect email adress or password')
+               return JsonResponse(data={"errors": messages["email"]}, status=400, json_dumps_params=jsn_cfg)
          else:
-            #return JsonResponse(data={'errors': self.form.errors, }, status=400)
-            return HttpResponse(form.errors.values())
+            return JsonResponse(data={"errors": form.errors }, status=400, json_dumps_params=jsn_cfg)
         
       #registration
       elif len(request.POST) == 5:
-         self.form_class = UserRegistration
-         self.form = self.get_form()
+         self.form = UserRegistration(request.POST)
          if self.form.is_valid():
             self.object = self.form.save()
             send_mail_for_verify(request, self.object)
-            #return JsonResponse(data={}, status=201)
-            return HttpResponse('the letter has been sent to your email')
-            
+            return JsonResponse(data={"success": messages["reg"]}, status=201, json_dumps_params=jsn_cfg)
+         
          else:
-            #return JsonResponse(data={'errors': self.form.errors,}, status=400)
-            return HttpResponse(self.form.errors.values())
+            return JsonResponse(data={'errors': self.form.errors }, status=400, json_dumps_params=jsn_cfg)
            
       #restoring account access
       elif len(request.POST) == 2:
-         self.form_class = UserPasswordReset
-         self.form = self.get_form()
+         self.form = UserPasswordReset(request.POST)
          if self.form.is_valid():
             data = self.form.cleaned_data.get('email')
             try:
                user = MyUser.objects.get(email = data, is_active = True)
                send_mail_for_reset(request, user)
-               #return JsonResponse(data={}, status=201)
-               return HttpResponse('the letter has been sent to your email')
+               return JsonResponse(data={"success": messages["res"]}, status=201, json_dumps_params=jsn_cfg) 
+            
             except:
-               #return JsonResponse(data={'errors': {'email': 'Аккаунт не найден!'}}, status=400)
-               return HttpResponse('the user with this email address does not exist')
+               return JsonResponse(data={'errors': messages["act"] }, status=400, json_dumps_params=jsn_cfg)
          else:
-            #return JsonResponse(data={'errors': {'email': 'Некорректный email адрес!'}}, status=400)
-            return HttpResponse(self.form.errors.values())
+            return JsonResponse(data={'errors': self.form.errors }, status=400, json_dumps_params=jsn_cfg)
+            
             
       else:
-         return HttpResponse('error!')
+         return JsonResponse(data={'errors': messages["err"] }, status=400, json_dumps_params=jsn_cfg)
 
 
 class LandingPage(TemplateView):
@@ -131,14 +124,11 @@ class ProfilePage(UpdateView):
          return super(ProfilePage, self).get(request, *args, **kwargs)
       else:
          return redirect('home')
-   
-   def get_success_url(self, **kwargs):
-      return reverse_lazy("profilepage", kwargs={'userslug': self.request.user.userslug})
      
    def post(self, request, *args, **kwargs):
       if len(request.POST) == 1:
          send_mail_for_reset(request, request.user)
-         return HttpResponseRedirect(self.get_success_url())
+         return JsonResponse(data={"success": messages["res"]}, status=201, json_dumps_params=jsn_cfg)
       
       form = UserChangeCustom(request.POST, request.FILES, instance=request.user)
       
@@ -147,16 +137,14 @@ class ProfilePage(UpdateView):
          email = form.data['emailfield'].lower()
          if email != request.user.email:
             send_mail_for_changing_email(self.request, self.request.user, email)
-            return HttpResponse("Мы отправили письмо для подтверждения нового адреса / Настройки обновлены")
-
-         #return HttpResponseRedirect(self.get_success_url())
-         #return JsonResponse(data={}, status=201)          
-         return HttpResponse("Настройки обновлены")
+            return JsonResponse(data={"success": messages["upd-em"]}, status=201, json_dumps_params=jsn_cfg)
+         
+         return JsonResponse(data={"success": messages["upd"]}, status=201, json_dumps_params=jsn_cfg)
+      
       else:
          err = form.errors
-         #return JsonResponse(data={'errors': err, }, status=400)
          form = UserChangeCustom()
-         return HttpResponse(err.values())
+         return JsonResponse(data={'errors': err }, status=400, json_dumps_params=jsn_cfg)
       
 
 #CreateView + UpdateView, get_object overriding
@@ -195,19 +183,17 @@ class ProgressPage(UpdateView):
       progress.binocular_vision = form_values['binocular_vision']
       progress.additional_info = form_values['additional_info']
       progress.save()
-      return HttpResponseRedirect(self.get_success_url())
+      return JsonResponse(data={"success": messages["svd"]}, status=201, json_dumps_params=jsn_cfg)
       
+      # return HttpResponseRedirect(progress.get_absolute_url())
       # obj = DayProgress.objects.get(user=self.request.user, current_date=datetime.today().date())
       # obj.delete()
       # form.instance.user = self.request.user
       # return super(ProgressPage, self).form_valid(form)
       
    def form_invalid(self, form):
-        self.object = self.get_object()
-        return self.render_to_response(self.get_context_data(form=form))
-
-   def get_success_url(self, **kwargs):
-      return reverse_lazy("progresspage", kwargs={'userslug': self.request.user.userslug})
+      self.object = self.get_object()
+      return JsonResponse(data={"errors": messages["err"]}, status=400, json_dumps_params=jsn_cfg)
    
    def get_object(self, queryset=None):
       try:
@@ -246,20 +232,21 @@ def logout_user(request):
    logout(request)
    return redirect('/')
 
-
 class EmailVerify(LoginView):
 
    @method_decorator(sensitive_post_parameters())
    @method_decorator(never_cache)
    def get(self, request, uidb64, token):
       user = self.get_user(uidb64)
+      url = str(get_current_site(request)) #redirect url
       if user is not None and gtoken.check_token(user, token):
          user.is_active = True
          user.save()
          login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-         return redirect('home')
+         data = { "success": {"mes": messages["scs"], "url": url } }
+         return JsonResponse(data=data, status=201, json_dumps_params=jsn_cfg)
       else:
-         return HttpResponse('error registration')
+         raise BadRequest
     
    def get_user(self, uidb64):
       try:
@@ -280,6 +267,7 @@ class PasswordResetConfirm(FormView):
    @method_decorator(sensitive_post_parameters())
    @method_decorator(never_cache)
    def dispatch(self, *args, **kwargs):
+      url = str(get_current_site(self.request)) #redirect url
       if "uidb64" not in kwargs or "token" not in kwargs:
          raise BadRequest
             
@@ -302,7 +290,8 @@ class PasswordResetConfirm(FormView):
                redirect_url = self.request.path.replace(token, self.reset_url_token)
                return HttpResponseRedirect(redirect_url) #get request
         
-      return HttpResponse('the link is invalid')
+      data = { "errors": {"mes": messages["lnk"], "url": url } }
+      return JsonResponse(data=data, status=400, json_dumps_params=jsn_cfg)
     
    def get_user(self, uidb64):
       try:
@@ -330,18 +319,21 @@ class EmailChanging(TemplateView):
    @method_decorator(never_cache)
    def get(self, request, uidb64, token, newemail):
       user = self.get_user(uidb64)
+      url = str(get_current_site(request)) #redirect url
       if user is not None and gtoken.check_token(user, token):
          try:
             email_address = urlsafe_b64decode(newemail[1::]).decode()
             validate_email(email_address)
             user.email = email_address
             user.save()
-            return redirect('home')
+            data = { "success": {"mes": messages["scs1"], "url": url } }
+            return JsonResponse(data=data, status=201, json_dumps_params=jsn_cfg)
          except:
             raise BadRequest
             
       else:
-         return HttpResponse('the link is invalid')
+         data = { "errors": {"mes": messages["lnk"], "url": url } }
+         return JsonResponse(data=data, status=400, json_dumps_params=jsn_cfg)
     
    def get_user(self, uidb64):
       try:

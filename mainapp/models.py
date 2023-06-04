@@ -143,6 +143,10 @@ class DayProgress(models.Model):
    def __str__(self):
       return f"{self.user.username} | {self.current_date.strftime('%d.%m.%Y')}"
    
+   def get_absolute_url(self):
+      return reverse("progresspage", kwargs={'userslug': self.user.userslug})
+   
+   
    class Meta:
       verbose_name = 'Прогресс'
       verbose_name_plural = 'Прогресс пользователей'
