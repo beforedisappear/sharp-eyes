@@ -1,5 +1,6 @@
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied, BadRequest
+from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
@@ -215,8 +216,6 @@ class MyDiary(ListView):
 def logout_user(request):
    logout(request)
    return redirect('/')
-
-from django.contrib.sites.shortcuts import get_current_site
 
 class EmailVerify(LoginView):
 
