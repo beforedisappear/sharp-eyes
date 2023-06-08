@@ -21,7 +21,6 @@ from .utils import get_date, prev_month, get_social_media, messages, jsn_cfg
 from .dairy_calendar import Calendar
 from datetime import datetime
 from base64 import urlsafe_b64decode
-import json
 
 
 class HomePage(TemplateView):
@@ -42,11 +41,12 @@ class HomePage(TemplateView):
             user = authenticate(username=fv["username"], password=fv["password"])
             if user is not None:
                login(request, user)
-               return HttpResponseRedirect(user.get_absolute_url())
+               return JsonResponse(data={"success": user.get_absolute_url()}, status=201)
             else:
-               return JsonResponse(data={"errors": messages["email"]}, status=400, json_dumps_params=jsn_cfg)
+               return JsonResponse(data={"errors": {0 : messages["email"]}}, status=400, json_dumps_params=jsn_cfg)
          else:
-            return JsonResponse(data={"errors": form.errors }, status=400, json_dumps_params=jsn_cfg)
+            errors = [{k : v[0]} for k, v in form.errors.items()]
+            return JsonResponse(data={"errors": errors }, status=400, json_dumps_params=jsn_cfg)
         
       #registration
       elif len(request.POST) == 5:
@@ -57,7 +57,8 @@ class HomePage(TemplateView):
             return JsonResponse(data={"success": messages["reg"]}, status=201, json_dumps_params=jsn_cfg)
          
          else:
-            return JsonResponse(data={'errors': self.form.errors }, status=400, json_dumps_params=jsn_cfg)
+            errors = [{k : v[0]} for k, v in self.form.errors.items()]
+            return JsonResponse(data={"errors": errors }, status=400, json_dumps_params=jsn_cfg)
            
       #restoring account access
       elif len(request.POST) == 2:
@@ -70,9 +71,10 @@ class HomePage(TemplateView):
                return JsonResponse(data={"success": messages["res"]}, status=201, json_dumps_params=jsn_cfg) 
             
             except:
-               return JsonResponse(data={'errors': messages["act"] }, status=400, json_dumps_params=jsn_cfg)
+               return JsonResponse(data={'errors': {0 : messages["act"] }}, status=400, json_dumps_params=jsn_cfg)
          else:
-            return JsonResponse(data={'errors': self.form.errors }, status=400, json_dumps_params=jsn_cfg)
+            errors = [{k : v[0]} for k, v in self.form.errors.items()]
+            return JsonResponse(data={'errors': errors }, status=400, json_dumps_params=jsn_cfg)
             
             
       else:
@@ -116,6 +118,9 @@ class ProfilePage(UpdateView):
       context = super().get_context_data(**kwargs)
       context["title"] = "SHARP EYES | Личный кабинет"
       context["social"] = get_social_media(self.request.user)
+      context["tasks"] = Task.objects.all()
+      context["instructions"] = Instruction.objects.all()
+      context["surveys"] = Survey.objects.all()
       return context
       
    def get(self, request, *args, **kwargs):
@@ -126,25 +131,27 @@ class ProfilePage(UpdateView):
          return redirect('home')
      
    def post(self, request, *args, **kwargs):
-      if len(request.POST) == 1:
+      if request.method == "POST" and len(request.POST) == 1:
          send_mail_for_reset(request, request.user)
          return JsonResponse(data={"success": messages["res"]}, status=201, json_dumps_params=jsn_cfg)
       
-      form = UserChangeCustom(request.POST, request.FILES, instance=request.user)
-      
-      if form.is_valid():
-         form.save()
-         email = form.data['emailfield'].lower()
-         if email != request.user.email:
-            send_mail_for_changing_email(self.request, self.request.user, email)
-            return JsonResponse(data={"success": messages["upd-em"]}, status=201, json_dumps_params=jsn_cfg)
-         
-         return JsonResponse(data={"success": messages["upd"]}, status=201, json_dumps_params=jsn_cfg)
-      
       else:
-         err = form.errors
-         form = UserChangeCustom()
-         return JsonResponse(data={'errors': err }, status=400, json_dumps_params=jsn_cfg)
+      
+         form = UserChangeCustom(request.POST, request.FILES, instance=request.user)
+      
+         if form.is_valid():
+            form.save()
+            email = form.data['emailfield'].lower()
+            if email != request.user.email:
+               send_mail_for_changing_email(self.request, self.request.user, email)
+               return JsonResponse(data={"success": messages["upd-em"]}, status=201, json_dumps_params=jsn_cfg)
+         
+            return JsonResponse(data={"success": messages["upd"]}, status=201, json_dumps_params=jsn_cfg)
+      
+         else:
+            errors = [{k : v[0]} for k, v in form.errors.items()]
+            form = UserChangeCustom()
+            return JsonResponse(data={'errors': errors }, status=400, json_dumps_params=jsn_cfg)
       
 
 #CreateView + UpdateView, get_object overriding
