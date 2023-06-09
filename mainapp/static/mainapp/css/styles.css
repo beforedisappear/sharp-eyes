@@ -2,6 +2,8 @@ body {
     margin: 0px;
     /* font-family: 'Poppins', sans-serif; */
     font-family: 'Montserrat', sans-serif;
+    /* overflow-y: hidden; */
+    
 }
 
 body a {
@@ -68,7 +70,7 @@ header {
     border-radius: 40px;
 }
 
-/* page content styling  */
+/* index page content styling  */
 .page-content {
     text-align: start;
     width: 800px;
@@ -83,7 +85,7 @@ header {
     margin: 10px 0px;
 }
 
-.project {
+.subhead {
     font-size: 36px;
 }
 
@@ -91,7 +93,7 @@ header {
     font-size: 50px;
 }
 
-.page-content h3 {
+.page-content .header3 {
     font-weight: 100;
     margin: 40px 0px;
 } 
@@ -100,7 +102,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 180px;
+    margin-top: 120px;
 }
 
 .start-btn {
@@ -118,4 +120,70 @@ header {
 
 .btn-text {
     text-align: center;
+}
+
+/* about page content styling */
+
+.center-text {
+    text-align: center;
+}
+
+.italic-text {
+    font-style: italic;
+}
+
+.subhead_box {
+    display: flex;
+}
+
+.subhead_box2 {
+    display: flex;
+    justify-content: end;
+}
+
+.pstyle {
+    width: 729px;
+}
+
+.p2style {
+    line-height: 30px;
+}
+
+.left-box {
+    display: flex;
+    justify-content: end;
+}
+
+.subhead_margin {
+    margin-top: 10px;
+}
+
+h3 {
+    font-weight: 100;
+}
+
+.contact-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contact-btn {
+    display: block;
+    width: 650px;
+    height: 300px;
+    margin: 40px auto 50px auto;
+}
+
+.contact-text {
+    padding: 20px 10px 10px 10px;
+}
+
+.contact-btn h3 {
+    text-align: center;
+    font-size: 22px;
+}
+
+.name {
+    font-weight: bold;
 }

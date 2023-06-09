@@ -1,2 +1,75 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
+
+{% block content %}
+
+<div class="page-content">
+    <h1 class="subhead">Проект</h1>
+    <h1 class="brand-title">"Зоркие глазки"</h1>
+
+    <h3 class="center-text">Был создан в 2019 год для решения актуальной проблемы :</h3>
+    <h3 class="italic-text">ВЫСОКИЙ УРОВЕНЬ АНОМАЛИИ РЕФРАКЦИИ ГЛАЗ У ОБУЧАЮЩИХСЯ, СВЯЗАННЫЙ С НЕЗНАНИЕМ ОСНОВ ЗДОРОВОГО ЗРИТЕЛЬНОГО РЕЖИМА И НЕ СОБЛЮДЕНИЕМ ЕГО,  ПЕРЕНАПРЯЖЕНИЕМ И РАЗВИТИЕМ ЦИФРОВИЗАЦИИ</h3>
+    <div class="subhead_box">
+        <img alt="Pointer" src="{% static 'mainapp/images/pointer.svg' %}">
+        <h1 class="subhead">Цель проекта:</h1> 
+    </div>
+    <h3 class="pstyle italic-text center-text subhead_margin">ПОВЫСИТЬ УРОВЕНЬ ЗНАНИЙ У ШКОЛЬНИКОВ И СТУДЕНТОВ РЕСПУБЛИКИ ТАТАРСТАН, 
+        В НАПРАВЛЕНИИ ЗДОРОВЬЯ ГЛАЗ И ПРОФИЛАКТИКИ БОЛЕЗНЕЙ ГЛАЗ
+    </h1>
+    
+    <div class="subhead_box2">
+        <img alt="Pointer" src="{% static 'mainapp/images/pointer.svg' %}">
+        <h1 class="subhead">Преимущества:</h1>
+    </div>
+    <h3 class="pstyle italic-text center-text subhead_margin">
+        1. ПЛОЩАДКА ДЛЯ ВЗАИМОДЕЙСТВИЯ УЧАЩИХСЯ И 
+        ПРОФИЛАКТИЧЕСКОЙ МЕДИЦИНЫ. БОЛЬШОЙ ОХВАТ УЧАЩИХСЯ. <br>
+        2. ПРАВИЛЬНОЕ ИСПОЛЬЗОВАНИЕ ГАДЖЕТОВ <br>
+        3. ПРОФИЛАКТИКА ЗАБОЛЕВАНИЯ
+    </h1> 
+
+    <div class="subhead_box">
+        <img alt="Pointer" src="{% static 'mainapp/images/pointer.svg' %}">
+        <h1 class="subhead">Текущие результаты:</h1> 
+    </div>
+    <h3 class="italic-text p2style subhead_margin">
+        <ol>
+        <li>2019 год грант 200 000 рублей из Фонда «Гражданское общество»</li>
+        <li>Охват более 2000 учащихся школ, колледжей, университетов г. Казани</li> 
+        <li>Партнеры проекта: Молодежное правительство РТ, Министерство здравоохранения РТ, Волонтеры-медики РТ, 
+        Форум iVolga 2.0, Управление здравоохранения, Управление образования г. Казани</li>
+        </ol>
+    </h1> 
+
+    <div class="subhead_box2">
+        <img alt="Pointer" src="{% static 'mainapp/images/pointer.svg' %}">
+        <h1 class="subhead">Планы развития:</h1>
+
+    </div>
+
+    <div class="left-box">
+    <h3 class="italic-text subhead_margin">
+        <ol>
+            <li>Охват всех школ, колледжей, вузов РТ</li>
+            <li>Выход на Всероссийский уровень</li> 
+        </ol>
+    </h1> 
+    </div>
+
+    <div class="contact-container">
+        <div class="contact-btn btn-style">
+            <div class="contact-text">
+                <h3>По вопросам сотрудничества</h3>
+                <h3 class="name">Миннуллина Эндже Рауфовна</h3>
+                <h3>Руководитель проекта, врач педиатр/офтальмолог, <br>
+                    ассистент кафедры офтальмологии КГМУ <br>
+                    89872786671 <br>
+                    enze-90@mail.ru <br>
+                </h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
