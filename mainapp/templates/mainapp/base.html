@@ -29,9 +29,9 @@
             <nav class="nav-container-auth">
                 <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'about' %}">О проекте</a></div>
                 <!-- <div class="nav-link btn-style"><a href="{% url 'login' %}">Мой прогресс</a></div> -->
-                <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'diarypage' %}">Мой прогресс</a></div>
+                <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'progresspage' request.user.userslug %}">Мой прогресс</a></div>
                 <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'diarypage' %}">Дневник</a></div>
-                <div class="nav-link-ifauth nav-svg"><a href="{% url 'diarypage' %}"><img class="profilesvg" src="{% static 'mainapp/images/profile.svg' %}"></a></div>
+                <div class="nav-link-ifauth nav-svg"><a href="{{ request.user.get_absolute_url }}"><img class="profilesvg" src="{% static 'mainapp/images/profile.svg' %}"></a></div>
                 <div class="nav-link-ifauth nav-svg"><a href="{% url 'logout' %}"><img class="exitsvg" src="{% static 'mainapp/images/exit.svg' %}"></a></div>
             </nav>
 
