@@ -64,7 +64,7 @@ class UserPasswordReset(PasswordResetForm):
    
 
 class UserRegistration(UserCreationForm):
-   email = LowercaseEmailField(label="Адрес почты")
+   email = LowercaseEmailField(label="Адрес почты", error_messages={'unique': 'Данный Email уже занят!'})
    password1 = forms.CharField(label="Пароль", widget=forms.PasswordInput(attrs={"class": "text-field__input"}))
    password2 = forms.CharField(label="Подтвердите Пароль", widget=forms.PasswordInput(attrs={"class": "text-field__input"}),)
       
@@ -74,12 +74,12 @@ class UserRegistration(UserCreationForm):
       self.fields['password1'].help_text = ''
       self.fields['password2'].help_text = ''
 
-   def clean(self):
-      data = super().clean()
-      email = data['email']
-      if email is not None and MyUser.objects.filter(email=email).exists():
-         raise ValidationError("Данный Email уже занят!")
-      return self.cleaned_data
+   # def clean(self):
+   #    data = super().clean()
+   #    email = data['email']
+   #    if email is not None and MyUser.objects.filter(email=email).exists():
+   #       raise ValidationError("Данный Email уже занят!")
+   #    return self.cleaned_data
         
    class Meta(UserCreationForm.Meta):
       model = get_user_model()
@@ -88,6 +88,15 @@ class UserRegistration(UserCreationForm):
      
 class UserAuthentication(AuthenticationForm):
    username = LowercaseEmailField(label="Адрес почты")
+   
+   def clean(self):
+      email = self.cleaned_data.get("username")
+      try:
+         user = MyUser.objects.get(email=email)
+      except:
+         raise ValidationError('Неправильный email')
+      
+      return self.cleaned_data
 
 
 class UserPasswordSet(SetPasswordForm):

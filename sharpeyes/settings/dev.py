@@ -1,5 +1,6 @@
 from .base import *
-from .social import *
+from .social_settings import *
+from .email_settings import *
 import os
 
 DEBUG = True

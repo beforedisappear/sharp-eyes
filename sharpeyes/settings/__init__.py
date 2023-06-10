@@ -1,10 +1,10 @@
 from split_settings.tools import include
-from decouple import config
+import os
 
 
-base_settings = ['base.py',
-                 'social.py',
+base_settings = ["base.py",               # standard django settings
+                 "social_settings.py",    # social_auth
+                 "email_settings.py",     # smpt
                  ]
-   
    
 include(*base_settings)
