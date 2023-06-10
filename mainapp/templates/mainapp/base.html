@@ -18,6 +18,27 @@
     <script language="JavaScript" src="{% static 'mainapp/js/main.js' %}"></script>
 </head>
 <body>
+    {% if request.user.is_authenticated %}
+
+    <header>
+        <div class="header">
+            <div class="logo-container">
+                <a href="{% url 'home' %}"><img src="{% static 'mainapp/images/logo.svg' %}"></a>
+                <a href="{% url 'home' %}"><h1 class="logo-text">Sharp Eyes</h1></a>    
+            </div>
+            <nav class="nav-container-auth">
+                <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'about' %}">О проекте</a></div>
+                <!-- <div class="nav-link btn-style"><a href="{% url 'login' %}">Мой прогресс</a></div> -->
+                <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'diarypage' %}">Мой прогресс</a></div>
+                <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'diarypage' %}">Дневник</a></div>
+                <div class="nav-link-ifauth nav-svg"><a href="{% url 'diarypage' %}"><img class="profilesvg" src="{% static 'mainapp/images/profile.svg' %}"></a></div>
+                <div class="nav-link-ifauth nav-svg"><a href="{% url 'logout' %}"><img class="exitsvg" src="{% static 'mainapp/images/exit.svg' %}"></a></div>
+            </nav>
+
+        </div>
+    </header>
+
+    {% else %}
     <header>
         <div class="header">
             <div class="logo-container">
@@ -25,15 +46,17 @@
                 <a href="{% url 'home' %}"><h1 class="logo-text">Sharp Eyes</h1></a>    
             </div>
             <nav class="nav-container">
-                <div class="nav-link"><a href="{% url 'about' %}">О проекте</a></div>
+                <div class="nav-link"><a class="hover-effect" href="{% url 'about' %}">О проекте</a></div>
                 <div class="nav-link btn-style"><a href="{% url 'login' %}">Вход</a></div>
-                <div class="nav-link"><a href="{% url 'register' %}">Регистрация</a></div>
+                <div class="nav-link"><a class="hover-effect" href="{% url 'register' %}">Регистрация</a></div>
             </nav>
 
         </div>
     </header>
+    {% endif %} 
     {% block content %}
     {% endblock %}
+    
     
 
 </body>

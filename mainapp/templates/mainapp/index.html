@@ -12,11 +12,19 @@
     <h3 class="header3">Эти простые упражения помогут тебе сохранить зрение!</h3>
     <h3 class="header3">Скорее регистрируйся и сделай первые шаги на пути к здоровому зрению =)</h3>
 
+    {% if request.user.is_authenticated %}
+    <div class="btn-container">
+        <div class="start-btn btn-style" onclick="location.href="{% url 'diarypage' %}";" style="cursor: pointer;">
+            <a href="{% url 'diarypage' %}">Начать</a>
+        </div>
+    </div>
+    {% else %}
     <div class="btn-container">
         <div class="start-btn btn-style" onclick="location.href="{% url 'register' %}";" style="cursor: pointer;">
             <a href="{% url 'register' %}">Начать</a>
         </div>
     </div>
+    {% endif %} 
 
     <h3 class="btn-text header3">И обязательно не забудь посетить  врача !</h3>
 </div> 
