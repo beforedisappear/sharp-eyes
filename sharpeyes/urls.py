@@ -27,8 +27,8 @@ urlpatterns = [
 ]
 
 #в режиме отладки добавление ещё одного маршрута для медиа файлов
-if settings.dev.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# if settings.dev.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #ссылка на функцию обработчик страницы 404
 #handler404 = PageNotFound

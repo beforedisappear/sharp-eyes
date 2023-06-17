@@ -2,12 +2,10 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from .utils import user_directory_path
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, Group, Permission
 
 from uuslug import slugify
-
-
+    
 class CustomAccountManager(BaseUserManager):
    
    def create_user(self, email, username, password=None, **extra_fields):
@@ -36,8 +34,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
    is_staff = models.BooleanField(_('Модератор'), default=False)
    is_active = models.BooleanField(_('Активирован'), default=False)
    description = models.CharField(_('Описание'),max_length=150, blank=True)
-   userpic = models.ImageField(_('Аватар'), upload_to=user_directory_path, 
-                               blank=True, default='baseuserpic.jpg') #mediafile
+   # userpic = models.ImageField(_('Аватар'), upload_to=user_directory_path, 
+   #                             blank=True, default='baseuserpic.jpg') #mediafile
    date_joined = models.DateField(_("Дата регистрации"), blank=True, null=True, auto_now_add=True)
    birthdate = models.DateField(_("Дата рождения"), blank=True, null=True)
    userslug = models.SlugField(_('userslug'), max_length=150, unique=True, db_index=True)
@@ -61,14 +59,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
          super(MyUser, self).save(*args, **kwargs)
       except:
          raise ValueError(_('This user already exists!'))
-      self.update_user_slug() 
-      
-   def update_user_slug(self):
-      # You now have both access to self.id
-      if not self.is_superuser: 
-         #now have both access to self.id
-         self.userslug = str(self.id) + '-' + slugify(self.username.lower().replace(' ', '-'))
-         MyUser.objects.filter(id=self.id).update(userslug=self.userslug)
          
    def get_absolute_url(self):
       return reverse('profilepage', kwargs={"userslug": self.userslug})
@@ -150,4 +140,3 @@ class DayProgress(models.Model):
    class Meta:
       verbose_name = 'Прогресс'
       verbose_name_plural = 'Прогресс пользователей'
-      

@@ -31,6 +31,10 @@
 
 {% include "mainapp/auth_popup.html" %}
 
+{% if message %}
+    {{message}}
+{% endif %}
+
 {% endblock %}
 
 

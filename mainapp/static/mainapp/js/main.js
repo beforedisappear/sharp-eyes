@@ -14,54 +14,8 @@ function getCookie(name) {
    return cookieValue;
 }
 
-// template
-// $(function ($){
-//    $('#resetform').submit(function (e) {
-//       e.preventDefault()
-//       $.ajax({
-//          type: this.method,
-//          url: this.action,
-//          data: $(this).serialize(),
-//          headers: {'X-CSRFToken': getCookie('csrftoken')},
-//          dataType: 'json',
-//          success: function (response) {
-//             console.log('okay', response)
-//          },
-//          error: function (response) {
-//             console.log('err - ', response);
-//          }
-//       })
-//    })
-// })
-
-// multiple function
-// $(function ($){
-//    $('form').submit(function (e) {
-//       e.preventDefault()
-//       $.ajax({
-//          type: this.method,
-//          url: this.action,
-//          data: $(this).serialize(),
-//          headers: {'X-CSRFToken': getCookie('csrftoken')},
-//          dataType: 'json',
-//          success: function (response) {
-//             console.log(response.success)
-//             //window.location.href;
-//          },
-//          error: function (response) {
-//             var data = JSON.parse(JSON.stringify(response['responseJSON']));
-//             console.log(data);
-//             for (const [key, value] of Object.entries(data.errors)) {
-//                console.log(value);
-//             }
-//          }
-//       })
-//    })
-// })
-
-
 $(function ($){
-   $('#authform, #regform, #resetform').submit(function (e) {
+   $('#authform, #regform, #resetform, #progressform').submit(function (e) {
       e.preventDefault();
       var form = e.target.id;
       $.ajax({
@@ -71,7 +25,7 @@ $(function ($){
          headers: {'X-CSRFToken': getCookie('csrftoken')},
          dataType: 'json',
          success: function (response) {
-            if ((form === "regform" ) || ((form === "resetform" ))) {
+            if ((form === "regform" ) || ((form === "resetform" ))|| ((form === "progressform" ))) {
                console.log(response.success);
             } else if (e.target.id === "authform"){
                window.location.href = response.success;
@@ -80,7 +34,7 @@ $(function ($){
          error: function (response) {
             var data = JSON.parse(JSON.stringify(response['responseJSON']));
             for (const [key, value] of Object.entries(data.errors)) {
-               if ((jQuery.type(value) === "object") && (form != "resetform")) {
+               if ((jQuery.type(value) === "object") && ((form != "resetform"))) {
                   for (const [k, v] of Object.entries(value)){
                      console.log(v);
                   }
@@ -99,7 +53,6 @@ $(function ($){
    $('#useredit, #resetpassword').submit(function (e) {
       e.preventDefault();
       var form = e.target.id;
-      var name = e.target.username.value;
       $.ajax({
          type: this.method,
          url: this.action,
@@ -108,10 +61,13 @@ $(function ($){
          dataType: 'json',
          success: function (response) {
             console.log(response.success);
-            var curdataname = $("#useredit input[type=text][name=username]").serialize();
-            if (curdataname != initdataname) {
-               var newurl = this.url.split('-')[0] + '-' + name.toLowerCase() + '/';
-               window.history.pushState({"html":response.html,"pageTitle":response.pageTitle},"", newurl);
+            if (form === "useredit") {
+               var name = e.target.username.value;
+               var curdataname = $("#useredit input[type=text][name=username]").serialize();
+               if (curdataname != initdataname) {
+                  var newurl = this.url.split('-')[0] + '-' + name.toLowerCase() + '/';
+                  window.history.pushState({"html":response.html,"pageTitle":response.pageTitle},"", newurl);
+               }
             }
 
          },

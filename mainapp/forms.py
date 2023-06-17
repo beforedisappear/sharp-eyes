@@ -55,7 +55,7 @@ class UserChangeCustom(forms.ModelForm):
    
    class Meta:
       model = get_user_model()
-      fields = ('userpic','emailfield', 'username', 'birthdate', 'sex', 'notification')
+      fields = ('emailfield', 'username', 'birthdate', 'sex', 'notification')
       widgets = {'birthdate': forms.DateInput(attrs={"placeholder": 'ДД.ММ.ГГГГ'}),}
    
 

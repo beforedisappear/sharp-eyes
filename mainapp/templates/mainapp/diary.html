@@ -3,7 +3,7 @@
 
 {% block content %}
 
-
+<link rel="stylesheet" href="{% static 'mainapp/css/style.css' %}">
 <div class="clearfix">
 	{% if prev_month %}
 		<a class="btn btn-info left" href="{% url 'diarypage' %}?{{ prev_month }}"> Previous Month </a>
