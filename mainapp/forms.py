@@ -64,9 +64,9 @@ class UserPasswordReset(PasswordResetForm):
    
 
 class UserRegistration(UserCreationForm):
-   email = LowercaseEmailField(label="Адрес почты", error_messages={'unique': 'Данный Email уже занят!'})
-   password1 = forms.CharField(label="Пароль", widget=forms.PasswordInput(attrs={"class": "text-field__input"}))
-   password2 = forms.CharField(label="Подтвердите Пароль", widget=forms.PasswordInput(attrs={"class": "text-field__input"}),)
+   email = LowercaseEmailField(label="", widget=forms.EmailInput(attrs={'placeholder': 'Enter your email'}))
+   password1 = forms.CharField(label="Пароль", widget=forms.PasswordInput(attrs={'placeholder': 'Enter your pass'}))
+   password2 = forms.CharField(label="Подтвердите Пароль", widget=forms.PasswordInput(attrs={'placeholder': 'Enter your pass'}),)
       
    def __init__(self, *args, **kwargs):
       super(UserCreationForm, self).__init__(*args, **kwargs)

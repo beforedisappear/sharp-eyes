@@ -5,7 +5,7 @@
 
 
 <div class="page-content">
-    <h1 class="project">Проект</h1>
+    <h1 class="project">Платформа</h1>
     <h1 class="brand-title">"Зоркие глазки"</h1>
 
     <h3 class="header3">Постоянно щуришься и перенапрягаешь глаза?</h3>
@@ -14,18 +14,22 @@
 
     {% if request.user.is_authenticated %}
     <div class="btn-container">
-        <div class="start-btn btn-style" onclick="location.href="{% url 'diarypage' %}";" style="cursor: pointer;">
-            <a href="{% url 'diarypage' %}">Начать</a>
-        </div>
+        <!-- <div class="start-btn btn-style" onclick="location.href="{% url 'progresspage' request.user.userslug %}";" style="cursor: pointer;">
+            <a href="{% url 'progresspage' request.user.userslug %}">Начать</a>
+        </div> -->
+        <button type="button" class="start-btn btn-style" onclick="location.href='{% url 'progresspage' request.user.userslug %}'"><p class="button-text">Начать</p></button>
     </div>
     {% else %}
     <div class="btn-container">
-        <div class="start-btn btn-style" onclick="location.href="{% url 'register' %}";" style="cursor: pointer;">
-            <a href="{% url 'register' %}">Начать</a>
-        </div>
+        <!-- <div class="start-btn btn-style" onclick="location.href="#";" style="cursor: pointer;">
+            <a href="#">Начать</a>
+        </div> -->
+        <button type="button" class="start-btn btn-style"  id="form-open" ><p class="button-text">Начать</p></button>
     </div>
-    {% endif %} 
 
+    <!-- onclick="location.href='{% url 'register' %}'" -->
+    {% endif %} 
+    <!-- {% url 'register' %} -->
     <h3 class="btn-text header3">И обязательно не забудь посетить  врача !</h3>
 </div> 
 

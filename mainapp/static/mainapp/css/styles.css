@@ -1,8 +1,28 @@
 body {
     margin: 0px;
     /* font-family: 'Poppins', sans-serif; */
-    font-family: 'Montserrat', sans-serif;    
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+    
 }
+
+/* body::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+
+/* makes scrollbar invisible */
+* {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
 
 /* #0e49df, rgba(49, 150, 252, 0.65) new colors 
 #406BDA, rgba(96, 131, 220, 0.46) previos colors */
@@ -17,7 +37,11 @@ header {
     text-align: center;
     padding: 20px 0px 15px 0px;
     color: #0e49df;
+    z-index: 98;
     /* border: solid 5px #000; */
+    position: fixed;
+    width: 100%;
+    background-color: white;
 }
 
 .header {
@@ -36,6 +60,10 @@ header {
     height: 100px;
     width: 100px;
     padding: 5px;
+}
+
+.logo-container:active {
+    transform: scale(0.98);
 }
 
 .logo-text {
@@ -75,6 +103,7 @@ header {
     font-size: 16px;
     font-weight: 500;
     /* border: solid 5px #000; */
+    cursor: pointer;
 }
 
 .nav-link a.hover-effect {
@@ -89,7 +118,6 @@ header {
     box-shadow: inset 150px 0 0 0 #0e49df;
     color: white;
   }
-
 
 /* header styling for auth users */
 .nav-container-auth {
@@ -113,6 +141,10 @@ header {
     /* border: solid 5px #000; */
 }
 
+.nav-svg:active {
+    transform: scale(0.98);
+}
+
 .nav-svg .exitsvg {
     width: 40px;
     height: 50px;
@@ -126,11 +158,17 @@ header {
     border-radius: 40px;
 }
 
+.btn-style:active {
+    transform: scale(0.98);
+}
+
 /* index page content styling  */
 .page-content {
     text-align: start;
     width: 800px;
     margin: 0px auto;
+    position: relative;
+    top: 149px;
 }
 
 .page-content h1 {
@@ -167,9 +205,11 @@ header {
     align-items: center;
     width: 430px;
     height: 86px;
+    cursor: pointer;
 }
 
-.start-btn a {
+.start-btn .button-text {
+    color: white;
     font-size: 30px;
     font-weight: bold;
 }
@@ -229,6 +269,10 @@ h3 {
     width: 650px;
     height: 300px;
     margin: 40px auto 50px auto;
+    background: linear-gradient(180deg, #0e49df, rgba(49, 150, 252, 0.65));
+    color: white;
+    border: solid 0px;
+    border-radius: 40px;
 }
 
 .contact-text {

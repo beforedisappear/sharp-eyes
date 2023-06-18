@@ -6,19 +6,85 @@
 
 {% else %}
 
-<h1><b>регистрация</b></h1>
+<div class="form_container">
+  <i class="uil uil-times form_close"></i>
+  <!-- Login From -->
+  <div class="form login_form">
+    <form action="#">
+      <div class="login_form_box">
+        <h2>Авторизация</h2>
+
+        <div class="input_box">
+          <input type="email" placeholder="Введите Ваш Email" class="" required />
+          
+          <i class="uil uil-envelope-alt email"></i>
+        </div>
+        
+        <div class="input_box">
+          
+          <input type="password" placeholder="Введите Ваш Пароль" required />
+          <i class="uil uil-lock password"></i>
+          <i class="uil uil-eye-slash pw_hide"></i>
+        
+        </div>
+
+        <div class="option_field">
+          <span class="checkbox">
+            <input type="checkbox" id="check" />
+            <label for="check">Запомнить меня</label>
+          </span>
+          <a href="#" class="forgot_pw">Забыли пароль?</a>
+        </div>
+
+        <button class="button">Войти!</button>
+
+        <div class="login_signup">У Вас нет аккаунта? <a href="#" id="signup">Регистрация</a></div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Signup From -->
+  <div class="form signup_form">
+    <form action="#">
+      <h2>Регистрация</h2>
+
+      <div class="input_box">
+        <input type="email" placeholder="Введите Вашу почту" required />
+        <i class="uil uil-envelope-alt email"></i>
+      </div>
+      <div class="input_box">
+        <input type="password" placeholder="Создайте пароль" required />
+        <i class="uil uil-lock password"></i>
+        <i class="uil uil-eye-slash pw_hide"></i>
+      </div>
+      <div class="input_box">
+        <input type="password" placeholder="Подтвердите пароль" required />
+        <i class="uil uil-lock password"></i>
+        <i class="uil uil-eye-slash pw_hide"></i>
+      </div>
+
+      <button class="button">Зарегистрироваться!</button>
+
+      <div class="login_signup">Уже есть аккаунт? <a href="#" id="login">Войдите!</a></div>
+    </form>
+  </div>
+</div>
+
+<!-- 
+<h1><b>Регистрация</b></h1>
 <form id="regform" method="POST" class="" action="">
    {% csrf_token %}
    {{user_reg_form.as_p}}
-   <button type="submit" id="" name="" valie="">Sign up</button>
+   <button type="submit" id="" name="" valie="">Зарегистрироваться</button>
 </form>
 <br></br>
 
-<h1><b>авторизация</b></h1>
+<h1><b>Авторизация</b></h1>
 <form id="authform" method="POST" class="" action="">
    {% csrf_token %}
+   
    {{user_log_form.as_p}}
-   <button type="submit" id="" name="" valie="">Sign in</button>
+   <button type="submit" id="" name="" valie="">Войти</button>
 </form>
 
 <a href="{% url "social:begin" "google-oauth2" %}" class="btn_google">
@@ -30,11 +96,12 @@
 
 
 <br></br>
-<h1><b>сбросить пароль</b></h1>
+<h1><b>Сбросить пароль</b></h1>
 <form id="resetform" method="POST" class="" action="">
    {% csrf_token %}
+   
    {{reset_pass_form.as_p}}
-   <button type="submit" id="" name="" valie="">reset</button>
-</form>
+   <button type="submit" id="" name="" valie="">Сбросить</button>
+</form> -->
 
 {% endif %}

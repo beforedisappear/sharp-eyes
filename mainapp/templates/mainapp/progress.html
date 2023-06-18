@@ -2,11 +2,9 @@
 {% load static %}
 
 {% block content %}
-
-<form id="progressform" method="POST" class="" enctype="">
+<form id="" method="POST" class="" enctype="">
    {% csrf_token %}
    {{form.as_p}}
    <br><button type="submit" id="">change</button></br>
 </form>
-
 {% endblock %}
