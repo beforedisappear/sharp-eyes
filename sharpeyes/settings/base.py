@@ -14,11 +14,13 @@ INSTALLED_APPS = [
     'mainapp.apps.MainappConfig',
     'split_settings',
     'social_django',
+    'django_hosts',
     'calendar',
     'uuslug',
 ]
 
 MIDDLEWARE = [
+    'django_hosts.middleware.HostsRequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -29,6 +31,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'sharpeyes.urls'
+ROOT_HOSTCONF = 'sharpeyes.hosts'
+DEFAULT_HOST = " "
 
 TEMPLATES = [
     {

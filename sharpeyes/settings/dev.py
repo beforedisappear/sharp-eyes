@@ -12,4 +12,6 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = ['mysite.com', '127.0.0.1']
+ALLOWED_HOSTS = ['mysite.com', 'abc.mysite.com',
+                 'localhost', 'abc.localhost',
+                 '127.0.0.1', ]

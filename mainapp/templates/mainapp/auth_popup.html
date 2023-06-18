@@ -10,19 +10,21 @@
   <i class="uil uil-times form_close"></i>
   <!-- Login From -->
   <div class="form login_form">
-    <form action="#">
+    <form id="authform" method="POST" class="" action="">
       <div class="login_form_box">
         <h2>Авторизация</h2>
-
+        
+        {% csrf_token %}
         <div class="input_box">
-          <input type="email" placeholder="Введите Ваш Email" class="" required />
-          
+          <!--<input type="email" placeholder="Введите Ваш Email" class="" required />-->
+          <input type="email" name="username" maxlength="254" required id="id_username_auth" placeholder="Введите Ваш Email">
           <i class="uil uil-envelope-alt email"></i>
         </div>
         
         <div class="input_box">
           
-          <input type="password" placeholder="Введите Ваш Пароль" required />
+          <!--<input type="password" placeholder="Введите Ваш Пароль" required />-->
+          <input type="password" name="password" autocomplete="current-password" required id="id_password_auth" placeholder="Введите Ваш Пароль">
           <i class="uil uil-lock password"></i>
           <i class="uil uil-eye-slash pw_hide"></i>
         
@@ -45,20 +47,29 @@
 
   <!-- Signup From -->
   <div class="form signup_form">
-    <form action="#">
+    <form id="regform" method="POST" class="" action="">
       <h2>Регистрация</h2>
 
+      {% csrf_token %}
       <div class="input_box">
-        <input type="email" placeholder="Введите Вашу почту" required />
+        <!--<input type="email" placeholder="Введите Вашу почту" required />-->
+        <input type="email" name="email" placeholder="Введите Вашу почту" required id="id_email_reg">
         <i class="uil uil-envelope-alt email"></i>
       </div>
       <div class="input_box">
-        <input type="password" placeholder="Создайте пароль" required />
+        <!--<input type="email" placeholder="Введите Вашу почту" required />-->
+        <input type="text" name="username" maxlength="25" autocapitalize="none" autocomplete="username" required id="id_username_reg" placeholder="Введите Ваш Никнейм">
+        <i class="uil uil-envelope-alt email"></i>
+      </div>
+      <div class="input_box">
+        <!--<input type="password" placeholder="Создайте пароль" required />-->
+        <input type="password" name="password1" placeholder="Создайте пароль" required id="id_password1_reg">
         <i class="uil uil-lock password"></i>
         <i class="uil uil-eye-slash pw_hide"></i>
       </div>
       <div class="input_box">
-        <input type="password" placeholder="Подтвердите пароль" required />
+        <!--<input type="password" placeholder="Подтвердите пароль" required />-->
+        <input type="password" name="password2" placeholder="Подтвердите пароль" required id="id_password2_reg">
         <i class="uil uil-lock password"></i>
         <i class="uil uil-eye-slash pw_hide"></i>
       </div>

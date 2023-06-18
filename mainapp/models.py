@@ -2,16 +2,13 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, Group, Permission
-
-from uuslug import slugify
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
     
 class CustomAccountManager(BaseUserManager):
    
    def create_user(self, email, username, password=None, **extra_fields):
       if not email:
          raise ValueError(_('Please provide an email address'))
-      print(email)
       user=self.model(username=username, email=email.lower(), **extra_fields)
       user.set_password(password)
       user.save()
@@ -125,9 +122,10 @@ class DayProgress(models.Model):
    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
    sharpness_vision = models.IntegerField(_("Острота зрение"),null=True, blank=True)
    colorness_vision = models.IntegerField(_("Цветовое зрение"),null=True, blank=True)
-   peripheral_vision = models.IntegerField(_("Переферическое зрение"),null=True, blank=True)
+   peripheral_vision = models.IntegerField(_("Периферическое зрение"),null=True, blank=True)
    binocular_vision  = models.IntegerField(_("Бинокулярное зрение"),null=True, blank=True)
-   additional_info = models.CharField(_("Дополнительная информация"), max_length=150, null=True, blank=True)
+   additional_info = models.CharField(_("Дополнительная информация"), 
+                                      max_length=150, null=True, blank=True)
    current_date = models.DateField(_("Дата действия"), auto_now_add=True)
    
    def __str__(self):

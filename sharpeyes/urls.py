@@ -21,8 +21,6 @@ from mainapp.views import *
 from sharpeyes import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    #список URL адресов mainapp
     path('', include('mainapp.urls')), 
 ]
 
