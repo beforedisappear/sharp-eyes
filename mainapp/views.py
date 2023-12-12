@@ -81,8 +81,7 @@ class HomePage(TemplateView):
          else:
             errors = err_list(self.form.errors)
             return JsonResponse(data={"errors": errors}, status=400, json_dumps_params=jsn_cfg)
-            
-            
+                       
       else:
          return JsonResponse(data={"errors": messages["err"] }, status=400, json_dumps_params=jsn_cfg)
 
@@ -134,7 +133,7 @@ class ProfilePage(UpdateView):
       if user is not None and user == request.user:
          return super(ProfilePage, self).get(request, *args, **kwargs)
       else:
-         return redirect('home')
+         raise PermissionDenied
      
    def post(self, request, *args, **kwargs):
       if request.method == "POST" and len(request.POST) == 1:
@@ -159,7 +158,6 @@ class ProfilePage(UpdateView):
             form = UserChangeCustom()
             return JsonResponse(data={"errors": errors}, status=400, json_dumps_params=jsn_cfg)
       
-
 #CreateView + UpdateView, get_object overriding
 class ProgressPage(UpdateView):
    template_name = "mainapp/progress.html"
@@ -216,7 +214,6 @@ class ProgressPage(UpdateView):
       else:
          return obj
 
-
 class MyDiary(ListView):
    model = DayProgress
    template_name = "mainapp/diary.html"
@@ -268,8 +265,7 @@ class EmailVerify(LoginView):
       except (TypeError, ValueError, OverflowError, MyUser.DoesNotExist, forms.ValidationError):
          user = None
       return user
-     
-     
+        
 #PasswordResetConfirmView overriding
 class PasswordResetConfirm(FormView):
    form_class = UserPasswordSet
@@ -326,7 +322,6 @@ class PasswordResetConfirm(FormView):
       data = { "success": {"mes": messages["scs2"]} }
       self.request.session["data"] = data
       return super().form_valid(form)
-
    
 class EmailChanging(TemplateView):
 

@@ -3,7 +3,7 @@ SOCIAL_AUTH_EMAIL_FORM_URL = '/login-form/'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '948248851315-fligescr1aqrbsiudief96o9kujt8itp.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-SOCIAL_AUTH_TELEGRAM_BOT_TOKEN = '5777561664:AAEM6PVmJ689eUbSQXtHO4z502u0HDNCc5M'
+SOCIAL_AUTH_TELEGRAM_BOT_TOKEN = '5777561664:AAEQ98zF3ss6elXIz1v6OBQlx6zOT1mftaE'
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',       #user attributes(description)

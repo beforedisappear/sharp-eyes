@@ -213,14 +213,16 @@ input[type="email"] {}
 }
 
 /* turns on darkening effect after clicking button */
-.home.show::before {
+.home.show_log::before,
+.home.show_reg::before {
   z-index: 1000;
   opacity: 1;
   pointer-events: auto;
 }
 
 /* From */
-.form_container {
+.form_container_log,
+.form_container_reg {
   position: fixed;
   max-width: 320px;
   width: 100%;
@@ -237,24 +239,17 @@ input[type="email"] {}
   transition: all 0.4s ease-out;
   font-size: 16px;
 }
-.home.show .form_container {
+
+.home.show_log .form_container_log,
+.home.show_reg .form_container_reg {
   opacity: 1;
   pointer-events: auto;
   transform: translate(-50%, -50%) scale(1);
   font-size: 20px;
 }
 
-.form_container {}
-.signup_form {
-  display: none;
-}
-.form_container.active .signup_form {
-  display: block;
-}
-.form_container.active .login_form {
-  display: none;
-}
-.form_close {
+.form_close_reg,
+.form_close_log {
   position: absolute;
   top: 10px;
   right: 20px;
@@ -263,7 +258,8 @@ input[type="email"] {}
   opacity: 0.7;
   cursor: pointer;
 }
-.form_container h2 {
+.form_container_log h2,
+.form_container_reg h2 {
   font-size: 32px;
   background-image: linear-gradient(180deg, #0e49df, rgba(49, 150, 252, 0.65));
   background-clip: text;
@@ -327,11 +323,13 @@ input[type="email"] {}
   justify-content: space-between;
   /* align-content: center; */
 }
-.form_container a {
+.form_container_log a,
+.form_container_reg a {
   color: #0e49df;
   font-size: 15px;
 }
-.form_container a:hover {
+.form_container_log a:hover,
+.form_container_reg a:hover {
   text-decoration: underline;
 }
 .checkbox {
@@ -352,7 +350,8 @@ input[type="email"] {}
   user-select: none;
   color: #0e49df;
 }
-.form_container .button {
+.form_container_log .button,
+.form_container_reg .button {
   background: #0e49df;
   margin-top: 30px;
   width: 100%;
@@ -367,7 +366,8 @@ input[type="email"] {}
   font-weight: bold;
 }
 
-.form_container .button:active {
+.form_container_log .button:active,
+.form_container_reg .button:active {
   transform: scale(0.98);
 }
 
@@ -375,4 +375,5 @@ input[type="email"] {}
   font-size: 16px;
   text-align: center;
   margin-top: 15px;
+  margin-bottom: 15px;
 }

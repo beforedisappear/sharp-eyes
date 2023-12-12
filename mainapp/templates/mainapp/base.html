@@ -1,68 +1,111 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
-    <link rel="stylesheet" href="{% static 'mainapp/css/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'mainapp/css/auth.css' %}">
-    <link rel="icon" href="{% static 'mainapp/images/logo.svg' %}" type="image/icon type">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
+    <link rel="stylesheet" href="{% static 'mainapp/css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'mainapp/css/auth.css' %}" />
+    <link
+      rel="icon"
+      href="{% static 'mainapp/images/logo.svg' %}"
+      type="image/icon type"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
     <!--jquery for ajax-->
-    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-    <script language="JavaScript" src="{% static 'mainapp/js/main.js' %}"></script>
-</head>
-<body>
+    <script
+      src="https://code.jquery.com/jquery-3.6.3.min.js"
+      integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      language="JavaScript"
+      src="{% static 'mainapp/js/main.js' %}"
+    ></script>
+  </head>
+  <body>
     {% if request.user.is_authenticated %}
 
     <header>
-        <div class="header">
-            <div class="logo-container">
-                <a href="{% url 'home' %}"><img src="{% static 'mainapp/images/logo.svg' %}"></a>
-                <a href="{% url 'home' %}"><h1 class="logo-text">Sharp Eyes</h1></a>    
-            </div>
-            <nav class="nav-container-auth">
-                <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'about' %}">О проекте</a></div>
-                <!-- <div class="nav-link btn-style"><a href="{% url 'login' %}">Мой прогресс</a></div> -->
-                <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'progresspage' request.user.userslug %}">Мой прогресс</a></div>
-                <div class="nav-link-ifauth nav-link"><a class="hover-effect" href="{% url 'diarypage' %}">Дневник</a></div>
-                <div class="nav-link-ifauth nav-svg"><a href="{{ request.user.get_absolute_url }}"><img class="profilesvg" src="{% static 'mainapp/images/profile.svg' %}"></a></div>
-                <div class="nav-link-ifauth nav-svg"><a href="{% url 'logout' %}"><img class="exitsvg" src="{% static 'mainapp/images/exit.svg' %}"></a></div>
-            </nav>
-
+      <div class="header">
+        <div class="logo-container">
+          <a href="{% url 'home' %}"
+            ><img src="{% static 'mainapp/images/logo.svg' %}"
+          /></a>
+          <a href="{% url 'home' %}"><h1 class="logo-text">Sharp Eyes</h1></a>
         </div>
+        <nav class="nav-container-auth">
+          <div class="nav-link-ifauth nav-link">
+            <a class="hover-effect" href="{% url 'about' %}">О проекте</a>
+          </div>
+          <!-- <div class="nav-link btn-style"><a href="{% url 'login' %}">Мой прогресс</a></div> -->
+          <div class="nav-link-ifauth nav-link">
+            <a
+              class="hover-effect"
+              href="{% url 'progresspage' request.user.userslug %}"
+              >Мой прогресс</a
+            >
+          </div>
+          <div class="nav-link-ifauth nav-link">
+            <a class="hover-effect" href="{% url 'diarypage' %}">Дневник</a>
+          </div>
+          <div class="nav-link-ifauth nav-svg">
+            <a href="{{ request.user.get_absolute_url }}"
+              ><img
+                class="profilesvg"
+                src="{% static 'mainapp/images/profile.svg' %}"
+            /></a>
+          </div>
+          <div class="nav-link-ifauth nav-svg">
+            <a href="{% url 'logout' %}"
+              ><img
+                class="exitsvg"
+                src="{% static 'mainapp/images/exit.svg' %}"
+            /></a>
+          </div>
+        </nav>
+      </div>
     </header>
 
     {% else %}
     <header>
-        <div class="header">
-            <div class="logo-container">
-                <a href="{% url 'home' %}"><img src="{% static 'mainapp/images/logo.svg' %}"></a>
-                <a href="{% url 'home' %}"><h1 class="logo-text">Sharp Eyes</h1></a>    
-            </div>
-            <nav class="nav-container">
-                <div class="nav-link"><a class="hover-effect" href="{% url 'about' %}">О проекте</a></div>
-                <div class="nav-link btn-style"><a id="form-open-log" >Вход</a></div>
-                <!-- <button type="button" class="nav-link btn-style button-login" onclick="location.href='{% url 'login' %}'"><p class="button-text">Начать</p></button> -->
-                <div class="nav-link"><a class="hover-effect" id="form-open-reg">Регистрация</a></div>
-            </nav>
-            <!-- id="form-open" -->
+      <div class="header">
+        <div class="logo-container">
+          <a href="{% url 'home' %}"
+            ><img src="{% static 'mainapp/images/logo.svg' %}"
+          /></a>
+          <a href="{% url 'home' %}"><h1 class="logo-text">Sharp Eyes</h1></a>
         </div>
+        <nav class="nav-container">
+          <div class="nav-link">
+            <a class="hover-effect" href="{% url 'about' %}">О проекте</a>
+          </div>
+          <div class="nav-link btn-style"><a id="form-open-log">Вход</a></div>
+          <!-- <button type="button" class="nav-link btn-style button-login" onclick="location.href='{% url 'login' %}'"><p class="button-text">Начать</p></button> -->
+          <div class="nav-link">
+            <a class="hover-effect" id="form-open-reg">Регистрация</a>
+          </div>
+        </nav>
+        <!-- id="form-open" -->
+      </div>
     </header>
-    {% endif %} 
-    <section class="home">
-    {% block content %}
-    {% endblock %}
-    </section>
-    <script language="JavaScript" src="{% static 'mainapp/js/auth.js' %}"></script>
-    
-
-</body>
+    {% endif %}
+    <section class="home">{% block content %} {% endblock %}</section>
+  </body>
 </html>

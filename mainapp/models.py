@@ -128,8 +128,11 @@ class DayProgress(models.Model):
                                       max_length=150, null=True, blank=True)
    current_date = models.DateField(_("Дата действия"), auto_now_add=True)
    
+   # def __str__(self):
+   #    return f"{self.user.username} | {self.current_date.strftime('%d.%m.%Y')}"
+
    def __str__(self):
-      return f"{self.user.username} | {self.current_date.strftime('%d.%m.%Y')}"
+      return f"ОЗ={self.sharpness_vision},ЦЗ={self.colorness_vision}, ПЗ={self.colorness_vision}, БЗ={self.binocular_vision}, ДИ={self.additional_info}"
    
    def get_absolute_url(self):
       return reverse("progresspage", kwargs={'userslug': self.user.userslug})

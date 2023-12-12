@@ -1,33 +1,47 @@
+{% load static %}
+
 {% if request.user.is_authenticated %}
 
-<h1>Вы уже авторизованы!</h1>
+{% comment %} <h1>Вы уже авторизованы!</h1>
 <a href="{{ request.user.get_absolute_url }}"><p>Профиль</p></a>
-<a href="{% url 'logout' %}"><p>Выйти</p></a>
+<a href="{% url 'logout' %}"><p>Выйти</p></a> {% endcomment %}
 
 {% else %}
 
-<div class="form_container">
-  <i class="uil uil-times form_close"></i>
+<div class="form_container_log">
+  <i class="uil uil-times form_close_log"></i>
   <!-- Login From -->
   <div class="form login_form">
     <form id="authform" method="POST" class="" action="">
       <div class="login_form_box">
         <h2>Авторизация</h2>
-        
+
         {% csrf_token %}
         <div class="input_box">
           <!--<input type="email" placeholder="Введите Ваш Email" class="" required />-->
-          <input type="email" name="username" maxlength="254" required id="id_username_auth" placeholder="Введите Ваш Email">
+          <input
+            type="email"
+            name="username"
+            maxlength="254"
+            required
+            id="id_username_auth"
+            placeholder="Введите Ваш Email"
+          />
           <i class="uil uil-envelope-alt email"></i>
         </div>
-        
+
         <div class="input_box">
-          
           <!--<input type="password" placeholder="Введите Ваш Пароль" required />-->
-          <input type="password" name="password" autocomplete="current-password" required id="id_password_auth" placeholder="Введите Ваш Пароль">
+          <input
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required
+            id="id_password_auth"
+            placeholder="Введите Ваш Пароль"
+          />
           <i class="uil uil-lock password"></i>
           <i class="uil uil-eye-slash pw_hide"></i>
-        
         </div>
 
         <div class="option_field">
@@ -38,12 +52,26 @@
           <a href="#" class="forgot_pw">Забыли пароль?</a>
         </div>
 
-        <button class="button">Войти!</button>
+        <button class="button" type="submit">Войти!</button>
 
-        <div class="login_signup">У Вас нет аккаунта? <a href="#" id="signup">Регистрация</a></div>
+        <div class="login_signup">
+          У Вас нет аккаунта? <a href="#" id="signup">Регистрация</a>
+        </div>
       </div>
     </form>
+
+    <a href="{% url "social:begin" "google-oauth2" %}" class="btn_google">
+      <img src="{% static 'mainapp/images/google-icon.svg' %}" width='21px' height='21px'>&nbspВойти через Google
+   </a>
+
+   <a class='btn_telegram'>
+    <script async src="https://telegram.org/js/telegram-widget.js?21" data-userpic="false" data-telegram-login="jespersitebot" data-size="medium" data-auth-url="http://mysite.com/social-auth/complete/telegram" data-request-access="write"></script>
+ </a>
   </div>
+</div>
+
+<div class="form_container_reg">
+  <i class="uil uil-times form_close_reg"></i>
 
   <!-- Signup From -->
   <div class="form signup_form">
@@ -53,66 +81,61 @@
       {% csrf_token %}
       <div class="input_box">
         <!--<input type="email" placeholder="Введите Вашу почту" required />-->
-        <input type="email" name="email" placeholder="Введите Вашу почту" required id="id_email_reg">
+        <input
+          type="email"
+          name="email"
+          placeholder="Введите Вашу почту"
+          required
+          id="id_email_reg"
+        />
         <i class="uil uil-envelope-alt email"></i>
       </div>
       <div class="input_box">
         <!--<input type="email" placeholder="Введите Вашу почту" required />-->
-        <input type="text" name="username" maxlength="25" autocapitalize="none" autocomplete="username" required id="id_username_reg" placeholder="Введите Ваш Никнейм">
+        <input
+          type="text"
+          name="username"
+          maxlength="25"
+          autocapitalize="none"
+          autocomplete="username"
+          required
+          id="id_username_reg"
+          placeholder="Введите Ваш Никнейм"
+        />
         <i class="uil uil-envelope-alt email"></i>
       </div>
       <div class="input_box">
         <!--<input type="password" placeholder="Создайте пароль" required />-->
-        <input type="password" name="password1" placeholder="Создайте пароль" required id="id_password1_reg">
+        <input
+          type="password"
+          name="password1"
+          placeholder="Создайте пароль"
+          required
+          id="id_password1_reg"
+        />
         <i class="uil uil-lock password"></i>
         <i class="uil uil-eye-slash pw_hide"></i>
       </div>
       <div class="input_box">
         <!--<input type="password" placeholder="Подтвердите пароль" required />-->
-        <input type="password" name="password2" placeholder="Подтвердите пароль" required id="id_password2_reg">
+        <input
+          type="password"
+          name="password2"
+          placeholder="Подтвердите пароль"
+          required
+          id="id_password2_reg"
+        />
         <i class="uil uil-lock password"></i>
         <i class="uil uil-eye-slash pw_hide"></i>
       </div>
 
       <button class="button">Зарегистрироваться!</button>
 
-      <div class="login_signup">Уже есть аккаунт? <a href="#" id="login">Войдите!</a></div>
+      <div class="login_signup">
+        Уже есть аккаунт? <a href="#" id="login">Войдите!</a>
+      </div>
     </form>
   </div>
 </div>
-
-<!-- 
-<h1><b>Регистрация</b></h1>
-<form id="regform" method="POST" class="" action="">
-   {% csrf_token %}
-   {{user_reg_form.as_p}}
-   <button type="submit" id="" name="" valie="">Зарегистрироваться</button>
-</form>
-<br></br>
-
-<h1><b>Авторизация</b></h1>
-<form id="authform" method="POST" class="" action="">
-   {% csrf_token %}
-   
-   {{user_log_form.as_p}}
-   <button type="submit" id="" name="" valie="">Войти</button>
-</form>
-
-<a href="{% url "social:begin" "google-oauth2" %}" class="btn_google">
-   <img src="" width='21px' height='21px'>&nbspВойти через Google
- </a>
- <a class='btn_telegram'>
-   <script async src="https://telegram.org/js/telegram-widget.js?21" data-userpic="false" data-telegram-login="jespersitebot" data-size="medium" data-auth-url="http://mysite.com/social-auth/complete/telegram" data-request-access="write"></script>
-</a>
-
-
-<br></br>
-<h1><b>Сбросить пароль</b></h1>
-<form id="resetform" method="POST" class="" action="">
-   {% csrf_token %}
-   
-   {{reset_pass_form.as_p}}
-   <button type="submit" id="" name="" valie="">Сбросить</button>
-</form> -->
 
 {% endif %}
