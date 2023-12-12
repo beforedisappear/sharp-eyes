@@ -5,8 +5,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // formContainerReg = document.querySelector(".form_container_reg"),
     formCloseBtnLog = document.querySelector(".form_close_log"),
     formCloseBtnReg = document.querySelector(".form_close_reg"),
+    formCloseBtnRec = document.querySelector(".form_close_rec"),
     signupBtn = document.querySelector("#signup"),
     loginBtn = document.querySelector("#login"),
+    recoverBtn = document.querySelector("#recover"),
     formOpenLog = document.querySelector("#form-open-log"),
     formOpenReg = document.querySelector("#form-open-reg"),
     pwShowHide = document.querySelectorAll(".pw_hide");
@@ -17,6 +19,7 @@ window.addEventListener("DOMContentLoaded", () => {
   formOpenReg?.addEventListener("click", (e) => onShowRegPopup(e));
   formCloseBtnLog?.addEventListener("click", (e) => onHideLogPopup(e));
   formCloseBtnReg?.addEventListener("click", (e) => onHideRegPopup(e));
+  formCloseBtnRec?.addEventListener("click", (e) => onHideResetPopup(e));
 
   const onShowLogPopup = (e) => {
     home.classList.add("show_log");
@@ -24,6 +27,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const onShowRegPopup = (e) => {
     home.classList.add("show_reg");
+  };
+
+  const onShowResetPopup = (e) => {
+    home.classList.add("show_rec");
+  };
+
+  const onHideResetPopup = (e) => {
+    home.classList.remove("show_rec");
   };
 
   const onHideLogPopup = (e) => {
@@ -57,6 +68,12 @@ window.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     home.classList.add("show_log");
     home.classList.remove("show_reg");
+  });
+
+  recoverBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    home.classList.remove("show_log");
+    home.classList.add("show_rec");
   });
 
   const succesfullRegistataion = document.querySelector(
@@ -95,12 +112,16 @@ window.addEventListener("DOMContentLoaded", () => {
           if (form === "resetform" || form === "progressform") {
             console.log(response.success);
             alert(response.success);
+
+            if (form === "resetform") {
+              document.getElementById("resetform").reset();
+            }
           } else if (form === "regform") {
             console.log(response.success);
             alert(response.success);
             document.getElementById("regform").reset();
             onHideRegPopup();
-          } else if (e.target.id === "authform") {
+          } else if (form === "authform") {
             window.location.href = response.success;
           }
         },

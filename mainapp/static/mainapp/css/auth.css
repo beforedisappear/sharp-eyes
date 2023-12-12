@@ -214,7 +214,8 @@ input[type="email"] {}
 
 /* turns on darkening effect after clicking button */
 .home.show_log::before,
-.home.show_reg::before {
+.home.show_reg::before,
+.home.show_rec::before {
   z-index: 1000;
   opacity: 1;
   pointer-events: auto;
@@ -222,7 +223,8 @@ input[type="email"] {}
 
 /* From */
 .form_container_log,
-.form_container_reg {
+.form_container_reg,
+.form_container_rec {
   position: fixed;
   max-width: 320px;
   width: 100%;
@@ -241,7 +243,8 @@ input[type="email"] {}
 }
 
 .home.show_log .form_container_log,
-.home.show_reg .form_container_reg {
+.home.show_reg .form_container_reg,
+.home.show_rec .form_container_rec {
   opacity: 1;
   pointer-events: auto;
   transform: translate(-50%, -50%) scale(1);
@@ -249,7 +252,8 @@ input[type="email"] {}
 }
 
 .form_close_reg,
-.form_close_log {
+.form_close_log,
+.form_close_rec {
   position: absolute;
   top: 10px;
   right: 20px;
@@ -259,7 +263,8 @@ input[type="email"] {}
   cursor: pointer;
 }
 .form_container_log h2,
-.form_container_reg h2 {
+.form_container_reg h2,
+.form_container_rec h2 {
   font-size: 32px;
   background-image: linear-gradient(180deg, #0e49df, rgba(49, 150, 252, 0.65));
   background-clip: text;
@@ -324,12 +329,14 @@ input[type="email"] {}
   /* align-content: center; */
 }
 .form_container_log a,
-.form_container_reg a {
+.form_container_reg a,
+.form_container_rec a {
   color: #0e49df;
   font-size: 15px;
 }
 .form_container_log a:hover,
-.form_container_reg a:hover {
+.form_container_reg a:hover,
+.form_container_rec a:hover {
   text-decoration: underline;
 }
 .checkbox {
@@ -351,7 +358,8 @@ input[type="email"] {}
   color: #0e49df;
 }
 .form_container_log .button,
-.form_container_reg .button {
+.form_container_reg .button,
+.form_container_rec .button {
   background: #0e49df;
   margin-top: 30px;
   width: 100%;
@@ -367,7 +375,8 @@ input[type="email"] {}
 }
 
 .form_container_log .button:active,
-.form_container_reg .button:active {
+.form_container_reg .button:active,
+.form_container_rec .button:active {
   transform: scale(0.98);
 }
 

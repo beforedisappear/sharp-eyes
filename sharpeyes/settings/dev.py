@@ -14,4 +14,4 @@ DATABASES = {
 
 ALLOWED_HOSTS = ['mysite.com', 'abc.mysite.com',
                  'localhost', 'abc.localhost',
-                 '127.0.0.1', ]
+                 '127.0.0.1' ]

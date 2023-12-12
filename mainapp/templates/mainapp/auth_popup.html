@@ -49,7 +49,7 @@
             <input type="checkbox" id="check" />
             <label for="check">Запомнить меня</label>
           </span>
-          <a href="#" class="forgot_pw">Забыли пароль?</a>
+          <a href="#" id="recover" class="forgot_pw">Забыли пароль?</a>
         </div>
 
         <button class="button" type="submit">Войти!</button>
@@ -134,6 +134,33 @@
       <div class="login_signup">
         Уже есть аккаунт? <a href="#" id="login">Войдите!</a>
       </div>
+    </form>
+  </div>
+</div>
+
+<div class="form_container_rec">
+  <i class="uil uil-times form_close_rec"></i>
+
+  <div class="form reset_form">
+    <form id="resetform" method="POST" class="" action="">
+      <h2>Восстановление пароля</h2>
+
+      {% csrf_token %}
+      <div class="input_box">
+        <!--<input type="email" placeholder="Введите Вашу почту" required />-->
+        <input
+          type="email"
+          name="email"
+          placeholder="Введите Вашу почту"
+          required
+          id="id_email_reset"
+        />
+        <i class="uil uil-envelope-alt email"></i>
+      </div>
+
+
+      <button class="button">Восстановить!</button>
+
     </form>
   </div>
 </div>
